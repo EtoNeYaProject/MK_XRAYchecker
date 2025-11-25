@@ -19,7 +19,7 @@
 # ║                                  mk69.su                                ║
 # +═════════════════════════════════════════════════════════════════════════+
 # +═════════════════════════════════════════════════════════════════════════+
-# ║                                VERSION 0.5                              ║
+# ║                                VERSION 0.7                              ║
 # ║             Не очень стабильная версия, но база работает.               ║
 # ║             В случае багов/недочётов создайте issue на github           ║
 # +═════════════════════════════════════════════════════════════════════════+
@@ -40,7 +40,9 @@ import platform
 import base64
 import requests
 import psutil
-import re
+import re   
+from datetime import datetime
+from http.client import BadStatusLine, RemoteDisconnected
 import urllib.parse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from types import SimpleNamespace
@@ -75,8 +77,41 @@ def clean_url(url):
     url = url.replace('\n', '').replace('\r', '')
     return url
 
+ANSI_ESCAPE = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+
+class SmartLogger:
+    def __init__(self, filename="checker_history.log"):
+        self.filename = filename
+        self.lock = Lock()
+        try:
+            with open(self.filename, 'a', encoding='utf-8') as f:
+                f.write(f"\n{'-'*30} NEW SESSION {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} {'-'*30}\n")
+        except Exception as e:
+            print(f"Ошибка создания лога: {e}")
+
+    def log(self, msg):
+        with self.lock:
+            print(msg)
+
+            try:
+                clean_msg = ANSI_ESCAPE.sub('', msg)
+                clean_msg = clean_msg.strip()
+                
+                if clean_msg:
+                    timestamp = datetime.now().strftime("[%H:%M:%S]")
+                    log_line = f"{timestamp} {clean_msg}\n"
+                    
+                    with open(self.filename, 'a', encoding='utf-8') as f:
+                        f.write(log_line)
+            except Exception:
+                pass
+
+MAIN_LOGGER = SmartLogger("checker_history.log")
+
 logging.basicConfig(format="%(asctime)s - %(message)s", level=logging.INFO, datefmt='%H:%M:%S')
-print_lock = Lock()
+
+def safe_print(msg):
+    MAIN_LOGGER.log(msg)
 
 TEMP_DIR = tempfile.mkdtemp()
 OS_SYSTEM = platform.system().lower()
@@ -102,13 +137,13 @@ LOGO_ASCII = r"""
 
 # ------------------------------ ДАЛЬШЕ БОГА НЕТ ------------------------------
 
-def safe_print(msg):
-    with print_lock:
-        print(msg)
-
 def is_port_in_use(port):
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        return s.connect_ex(('127.0.0.1', port)) == 0
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.settimeout(0.1)
+            return s.connect_ex(('127.0.0.1', port)) == 0
+    except:
+        return False
 
 def split_list(lst, n):
     if n <= 0: return []
@@ -429,6 +464,8 @@ def parse_hysteria2(url):
             "port": parsed.port,
             "sni": params.get("sni", [""])[0],
             "insecure": params.get("insecure", ["0"])[0] == "1",
+            "obfs": params.get("obfs", ["none"])[0],
+            "obfs_password": params.get("obfs-password", [""])[0],
             "tag": urllib.parse.unquote(tag).strip()
         }
     except: return None
@@ -544,12 +581,19 @@ def create_config_file(proxy_url, local_port, work_dir):
         }
         
     elif proxy_conf["protocol"] == "hysteria2":
+        hy2_settings = {
+            "address": proxy_conf["address"],
+            "port": int(proxy_conf["port"]),
+            "users": [{"password": proxy_conf["uuid"]}]
+        }
+        if proxy_conf.get("obfs") and proxy_conf.get("obfs") != "none":
+             hy2_settings["obfs"] = {
+                 "type": proxy_conf["obfs"],
+                 "password": proxy_conf.get("obfs_password", "")
+             }
+
         outbound["settings"] = {
-            "vnext": [{
-                "address": proxy_conf["address"],
-                "port": int(proxy_conf["port"]),
-                "users": [{"password": proxy_conf["uuid"]}]
-            }]
+            "vnext": [hy2_settings]
         }
 
     else:
@@ -623,6 +667,8 @@ def check_connection(local_port, domain, timeout):
             return round((end - start) * 1000), None
         else:
             return False, f"HTTP {resp.status_code}"
+    except (BadStatusLine, RemoteDisconnected):
+        return False, "Handshake Fail"
     except Exception as e:
         return False, str(e)
 
@@ -684,10 +730,26 @@ def run_logic(args):
                  break
     
     if not CORE_PATH:
-        print(f"{Fore.RED}\n[ERROR] Ядро (xray/v2ray) не найдено! Убедитесь, что файл рядом.{Style.RESET_ALL}")
+        safe_print(f"{Fore.RED}\n[ERROR] Ядро (xray/v2ray) не найдено! Убедитесь, что файл рядом.{Style.RESET_ALL}")
         return
         
-    logging.info(f"Core detected: {CORE_PATH}")
+    safe_print(f"Core detected: {CORE_PATH}")
+
+    safe_print(f"{Fore.YELLOW}>> Очистка зависших процессов ядра...{Style.RESET_ALL}")
+    killed_count = 0
+    target_names = [os.path.basename(CORE_PATH).lower(), "xray.exe", "v2ray.exe", "xray", "v2ray"]
+    
+    for proc in psutil.process_iter(['pid', 'name']):
+        try:
+            if proc.info['name'] and proc.info['name'].lower() in target_names:
+                proc.kill()
+                killed_count += 1
+        except: pass
+    
+    if killed_count > 0:
+        safe_print(f"{Fore.GREEN}>> Убито старых процессов: {killed_count}{Style.RESET_ALL}")
+    
+    time.sleep(1)
     
     lines = set()
     total_found_raw = 0
@@ -695,12 +757,13 @@ def run_logic(args):
     if args.file:
         fpath = args.file.strip('"')
         if os.path.exists(fpath):
+            safe_print(f"{Fore.CYAN}>> Чтение файла: {fpath}{Style.RESET_ALL}")
             with open(fpath, 'r', encoding='utf-8', errors='ignore') as f:
                 parsed, count = parse_content(f.read())
                 total_found_raw += count
                 lines.update(parsed)
         else:
-            print(f"{Fore.RED}Файл не найден: {fpath}{Style.RESET_ALL}")
+            safe_print(f"{Fore.RED}Файл не найден: {fpath}{Style.RESET_ALL}")
 
     if args.url:
         links = fetch_url(args.url)
@@ -716,12 +779,12 @@ def run_logic(args):
     if total_found_raw > 0:
         duplicates = total_found_raw - len(full)
         if duplicates > 0:
-            print(f"{Fore.YELLOW}Найдено: {total_found_raw}. Дубликатов: {duplicates}. К проверке: {len(full)}{Style.RESET_ALL}")
+            safe_print(f"{Fore.YELLOW}Найдено: {total_found_raw}. Дубликатов: {duplicates}. К проверке: {len(full)}{Style.RESET_ALL}")
         else:
-             print(f"{Fore.CYAN}Загружено прокси: {len(full)}{Style.RESET_ALL}")
+             safe_print(f"{Fore.CYAN}Загружено прокси: {len(full)}{Style.RESET_ALL}")
     
     if not full:
-        print(f"{Fore.RED}Нет прокси для проверки.{Style.RESET_ALL}")
+        safe_print(f"{Fore.RED}Нет прокси для проверки.{Style.RESET_ALL}")
         return
 
     if args.shuffle: random.shuffle(full)
@@ -738,7 +801,7 @@ def run_logic(args):
     chunks = list(split_list(full, threads))
     results = []
     
-    print(f"{Fore.MAGENTA}Запуск {threads} потоков...{Style.RESET_ALL}\n")
+    safe_print(f"{Fore.MAGENTA}Запуск {threads} потоков...{Style.RESET_ALL}\n")
 
     with ThreadPoolExecutor(max_workers=threads) as executor:
         futures = []
@@ -751,7 +814,7 @@ def run_logic(args):
                 results.extend(f.result())
         except KeyboardInterrupt:
             CTRL_C = True
-            print(f"\n{Fore.RED}!!! Остановка по CTRL+C !!!{Style.RESET_ALL}")
+            safe_print(f"\n{Fore.RED}!!! Остановка по CTRL+C !!!{Style.RESET_ALL}")
             executor.shutdown(wait=False)
 
     results.sort(key=lambda x: x[1])
@@ -760,13 +823,13 @@ def run_logic(args):
         for r in results:
             f.write(r[0] + '\n')
             
-    print(f"\n{Fore.LIGHTGREEN_EX}Готово! Рабочих: {len(results)}{Style.RESET_ALL}")
-    print(f"{Fore.LIGHTGREEN_EX}Результат сохранен в: {Style.BRIGHT}{args.output}{Style.RESET_ALL}")
+    safe_print(f"\n{Fore.LIGHTGREEN_EX}Готово! Рабочих: {len(results)}{Style.RESET_ALL}")
+    safe_print(f"{Fore.LIGHTGREEN_EX}Результат сохранен в: {Style.BRIGHT}{args.output}{Style.RESET_ALL}")
 
 def print_banner():
     os.system('cls' if os.name == 'nt' else 'clear')
     print(Fore.CYAN + LOGO_ASCII + Style.RESET_ALL)
-    print(f"{Fore.MAGENTA}          by mkultra69  |  https://t.me/MKextera{Style.RESET_ALL}")
+    safe_print(f"{Fore.MAGENTA}          by mkultra69  |  https://t.me/MKextera{Style.RESET_ALL}")
     print(Fore.LIGHTBLACK_EX + "─"*75 + Style.RESET_ALL)
 
 def interactive_menu():
@@ -824,13 +887,13 @@ def interactive_menu():
 
         args = SimpleNamespace(**defaults)
         
-        print(f"\n{Fore.YELLOW}>>> Инициализация проверки...{Style.RESET_ALL}")
+        safe_print(f"\n{Fore.YELLOW}>>> Инициализация проверки...{Style.RESET_ALL}")
         time.sleep(0.5)
         
         try:
             run_logic(args)
         except Exception as e:
-            print(f"{Fore.RED}CRITICAL ЕГГОГ: {e}{Style.RESET_ALL}")
+            safe_print(f"{Fore.RED}CRITICAL ЕГГОГ: {e}{Style.RESET_ALL}")
         
         print(f"\n{Fore.YELLOW}Нажмите Enter чтобы вернуться в меню...{Style.RESET_ALL}")
         input()
@@ -845,10 +908,10 @@ def main():
     parser.add_argument("-l", "--lport", type=int, default=1080)
     parser.add_argument("-T", "--threads", type=int, default=20)
     parser.add_argument("-c", "--core", default="xray")
-    parser.add_argument("--t2exec", type=float, default=0.8)
+    parser.add_argument("--t2exec", type=float, default=1.0) # время на запуск ядра для каждого потока. (в секундах) если очень много ошибок, стоит попробовать повысить время.
     parser.add_argument("--t2kill", type=float, default=0.1)
     parser.add_argument("-o", "--output", default="sorted.txt") # тут вот тоже ручками можно аутпут файлик прописать
-    parser.add_argument("-d", "--domain", default='http://www.gstatic.com/generate_204') # а это ссылочка через которую все прокси чекаются, тоже при желании менять
+    parser.add_argument("-d", "--domain", default='http://cp.cloudflare.com/generate_204') # ссылка через которую проверются прокси, условно для Иранских, стоит заменить с google на например: http://cp.cloudflare.com/generate_204
     parser.add_argument("-s", "--shuffle", action='store_true')
     parser.add_argument("-n", "--number", type=int)
 
