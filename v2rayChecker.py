@@ -19,9 +19,9 @@
 # ║                                  mk69.su                                ║
 # +═════════════════════════════════════════════════════════════════════════+
 # +═════════════════════════════════════════════════════════════════════════+
-# ║                                VERSION 0.7                              ║
-# ║             Не очень стабильная версия, но база работает.               ║
+# ║                           VERSION 0.8 unstable                          ║
 # ║             В случае багов/недочётов создайте issue на github           ║
+# ║                                                                         ║
 # +═════════════════════════════════════════════════════════════════════════+
 
 
@@ -50,6 +50,136 @@ from threading import Lock
 
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+try:
+    import aggregator
+    AGGREGATOR_AVAILABLE = True
+except ImportError:
+    AGGREGATOR_AVAILABLE = False
+
+# cfg
+CONFIG_FILE = "config.json"
+
+# Стандартные истончники проксей
+DEFAULT_SOURCES = {
+    "1": [
+        "https://sub.amiralter.com/config", "https://itsyebekhe.github.io/PSG/", "https://f0rc3run.github.io/F0rc3Run-panel/", 
+        "https://raw.githubusercontent.com/mermeroo/QX/main/Nodes", "https://raw.githubusercontent.com/Ashkan-m/v2ray/main/VIP.txt",
+        "https://raw.githubusercontent.com/nscl5/5/main/configs/all.txt", "https://raw.githubusercontent.com/mermeroo/Loon/main/all.nodes.txt",
+        "https://raw.githubusercontent.com/Kolandone/v2raycollector/main/ss.txt", "https://raw.githubusercontent.com/MhdiTaheri/V2rayCollector/main/sub/ss",
+        "https://raw.githubusercontent.com/Surfboardv2ray/TGParse/main/python/ss", "https://raw.githubusercontent.com/MhdiTaheri/V2rayCollector/main/sub/mix",
+        "https://raw.githubusercontent.com/T3stAcc/V2Ray/main/All_Configs_Sub.txt", "https://raw.githubusercontent.com/liketolivefree/kobabi/main/sub_all.txt",
+        "https://raw.githubusercontent.com/Kolandone/v2raycollector/main/vless.txt", "https://raw.githubusercontent.com/LalatinaHub/Mineral/master/result/nodes",
+        "https://raw.githubusercontent.com/misersun/config003/main/config_all.yaml", "https://raw.githubusercontent.com/penhandev/AutoAiVPN/main/allConfigs.txt",
+        "https://raw.githubusercontent.com/Kolandone/v2raycollector/main/config.txt", "https://raw.githubusercontent.com/MhdiTaheri/V2rayCollector/main/sub/vless",
+        "https://raw.githubusercontent.com/Surfboardv2ray/TGParse/main/configtg.txt", "https://raw.githubusercontent.com/Surfboardv2ray/TGParse/main/python/vless",
+        "https://raw.githubusercontent.com/lagzian/SS-Collector/main/SS/TrinityBase", "https://raw.githubusercontent.com/terik21/HiddifySubs-VlessKeys/main/6Satu",
+        "https://raw.githubusercontent.com/wiki/gfpcom/free-proxy-list/lists/ss.txt", "https://raw.githubusercontent.com/Danialsamadi/v2go/main/All_Configs_Sub.txt",
+        "https://raw.githubusercontent.com/sevcator/5ubscrpt10n/main/protocols/vl.txt", "https://raw.githubusercontent.com/aqayerez/MatnOfficial-VPN/main/MatnOfficial",
+        "https://raw.githubusercontent.com/wiki/gfpcom/free-proxy-list/lists/vless.txt", "https://raw.githubusercontent.com/youfoundamin/V2rayCollector/main/ss_iran.txt",
+        "https://raw.githubusercontent.com/Argh94/V2RayAutoConfig/main/configs/Vless.txt", "https://raw.githubusercontent.com/RaitonRed/ConfigsHub/main/All_Configs_Sub.txt",
+        "https://raw.githubusercontent.com/SoliSpirit/v2ray-configs/main/all_configs.txt", "https://raw.githubusercontent.com/skywrt/v2ray-configs/main/All_Configs_Sub.txt",
+        "https://raw.githubusercontent.com/SamanGho/v2ray_collector/main/v2tel_links2.txt", "https://raw.githubusercontent.com/SoliSpirit/v2ray-configs/main/Protocols/ss.txt",
+        "https://raw.githubusercontent.com/barry-far/V2ray-Config/main/All_Configs_Sub.txt", "https://raw.githubusercontent.com/coldwater-10/V2rayCollector/main/vmess_iran.txt",
+        "https://raw.githubusercontent.com/youfoundamin/V2rayCollector/main/vless_iran.txt", "https://github.com/Epodonios/v2ray-configs/raw/main/Splitted-By-Protocol/vmess.txt",
+        "https://raw.githubusercontent.com/SoliSpirit/v2ray-configs/main/Protocols/vless.txt", "https://raw.githubusercontent.com/SoliSpirit/v2ray-configs/main/Protocols/vmess.txt",
+        "https://raw.githubusercontent.com/HosseinKoofi/GO_V2rayCollector/main/vless_iran.txt", "https://raw.githubusercontent.com/hamedcode/port-based-v2ray-configs/main/sub/ss.txt",
+        "https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/sub_merge.txt", "https://raw.githubusercontent.com/AvenCores/goida-vpn-configs/main/githubmirror/14.txt",
+        "https://raw.githubusercontent.com/10ium/ScrapeAndCategorize/main/output_configs/USA.txt", "https://raw.githubusercontent.com/Danialsamadi/v2go/main/Splitted-By-Protocol/vmess.txt",
+        "https://raw.githubusercontent.com/F0rc3Run/F0rc3Run/main/splitted-by-protocol/vless.txt", "https://raw.githubusercontent.com/RaitonRed/ConfigsHub/main/Splitted-By-Protocol/ss.txt",
+        "https://raw.githubusercontent.com/ebrasha/free-v2ray-public-list/main/vmess_configs.txt", "https://raw.githubusercontent.com/hamedcode/port-based-v2ray-configs/main/sub/vless.txt",
+        "https://raw.githubusercontent.com/hamedcode/port-based-v2ray-configs/main/sub/vmess.txt", "https://raw.githubusercontent.com/mshojaei77/v2rayAuto/main/telegram/popular_channels_1",
+        "https://raw.githubusercontent.com/10ium/ScrapeAndCategorize/main/output_configs/Vless.txt", "https://raw.githubusercontent.com/barry-far/V2ray-Config/main/Splitted-By-Protocol/ss.txt",
+        "https://raw.githubusercontent.com/kismetpro/NodeSuber/main/Splitted-By-Protocol/vless.txt", "https://raw.githubusercontent.com/nyeinkokoaung404/V2ray-Configs/main/All_Configs_Sub.txt",
+        "https://raw.githubusercontent.com/itsyebekhe/PSG/main/config.txt", "https://github.com/4n0nymou3/multi-proxy-config-fetcher/raw/main/configs/proxy_configs.txt",
+        "https://raw.githubusercontent.com/RaitonRed/ConfigsHub/main/Splitted-By-Protocol/vless.txt", "https://raw.githubusercontent.com/RaitonRed/ConfigsHub/main/Splitted-By-Protocol/vmess.txt",
+        "https://raw.githubusercontent.com/mahdibland/ShadowsocksAggregator/master/sub/sub_merge.txt", "https://raw.githubusercontent.com/barry-far/V2ray-Config/main/Splitted-By-Protocol/vless.txt",
+        "https://raw.githubusercontent.com/barry-far/V2ray-Config/main/Splitted-By-Protocol/vmess.txt", "https://raw.githubusercontent.com/Epodonios/v2ray-configs/main/Splitted-By-Protocol/vmess.txt",
+        "https://raw.githubusercontent.com/F0rc3Run/F0rc3Run/main/splitted-by-protocol/shadowsocks.txt", "https://raw.githubusercontent.com/10ium/ScrapeAndCategorize/main/output_configs/ShadowSocks.txt",
+        "https://raw.githubusercontent.com/MatinGhanbari/v2ray-configs/main/subscriptions/v2ray/all_sub.txt", "https://raw.githubusercontent.com/Firmfox/Proxify/main/v2ray_configs/seperated_by_protocol/shadowsocks.txt",
+        "https://raw.githubusercontent.com/ebrasha/free-v2ray-public-list/main/V2Ray-Config-By-EbraSha-All-Type.txt"
+    ],
+    "2": [
+        "https://raw.githubusercontent.com/NiREvil/vless/main/sub/SSTime", "https://raw.githubusercontent.com/nscl5/5/main/configs/vmess.txt",
+        "https://raw.githubusercontent.com/HakurouKen/free-node/main/public", "https://raw.githubusercontent.com/Mosifree/-FREE2CONFIG/main/Vless",
+        "https://raw.githubusercontent.com/awesome-vpn/awesome-vpn/master/ss", "https://raw.githubusercontent.com/mfuu/v2ray/master/merge/merge.txt",
+        "https://raw.githubusercontent.com/Mosifree/-FREE2CONFIG/main/Reality", "https://raw.githubusercontent.com/awesome-vpn/awesome-vpn/master/all",
+        "https://raw.githubusercontent.com/VpnNetwork01/vpn-net/main/README.md", "https://raw.githubusercontent.com/Kolandone/v2raycollector/main/ssr.txt",
+        "https://raw.githubusercontent.com/xiaoji235/airport-free/main/v2ray.txt", "https://raw.githubusercontent.com/penhandev/AutoAiVPN/main/AtuoAiVPN.txt",
+        "https://raw.githubusercontent.com/Kolandone/v2raycollector/main/vmess.txt", "https://raw.githubusercontent.com/Syavar/V2ray-Configs/main/OK_vk.com.txt",
+        "https://raw.githubusercontent.com/peasoft/NoMoreWalls/master/list_raw.txt", "https://raw.githubusercontent.com/ALIILAPRO/v2rayNG-Config/main/server.txt",
+        "https://raw.githubusercontent.com/Barabama/FreeNodes/main/nodes/ndnode.txt", "https://raw.githubusercontent.com/Barabama/FreeNodes/main/nodes/wenode.txt",
+        "https://raw.githubusercontent.com/MhdiTaheri/V2rayCollector/main/sub/vmess", "https://raw.githubusercontent.com/SonzaiEkkusu/V2RayDumper/main/config.txt",
+        "https://raw.githubusercontent.com/Surfboardv2ray/TGParse/main/python/vmess", "https://raw.githubusercontent.com/Surfboardv2ray/TGParse/main/tg-parser.py",
+        "https://raw.githubusercontent.com/iboxz/free-v2ray-collector/main/main/mix", "https://raw.githubusercontent.com/Barabama/FreeNodes/main/nodes/yudou66.txt",
+        "https://raw.githubusercontent.com/Barabama/FreeNodes/main/nodes/nodefree.txt", "https://raw.githubusercontent.com/Surfboardv2ray/TGParse/main/main-parser.py",
+        "https://raw.githubusercontent.com/Syavar/V2ray-Configs/main/OK_viber.com.txt", "https://raw.githubusercontent.com/iboxz/free-v2ray-collector/main/main/vless",
+        "https://raw.githubusercontent.com/iboxz/free-v2ray-collector/main/main/vmess", "https://raw.githubusercontent.com/Barabama/FreeNodes/main/nodes/clashmeta.txt",
+        "https://raw.githubusercontent.com/Barabama/FreeNodes/main/nodes/nodev2ray.txt", "https://raw.githubusercontent.com/Syavar/V2ray-Configs/main/OK_TLS_vk.com.txt",
+        "https://raw.githubusercontent.com/Syavar/V2ray-Configs/main/OK_google.com.txt", "https://raw.githubusercontent.com/rango-cfs/NewCollector/main/v2ray_links.txt",
+        "https://raw.githubusercontent.com/roosterkid/openproxylist/main/V2RAY_RAW.txt", "https://raw.githubusercontent.com/Barabama/FreeNodes/main/nodes/v2rayshare.txt",
+        "https://raw.githubusercontent.com/arshiacomplus/v2rayExtractor/main/vless.html", "https://raw.githubusercontent.com/miladtahanian/V2RayCFGDumper/main/config.txt",
+        "https://raw.githubusercontent.com/Created-By/Telegram-Eag1e_YT/main/%40Eag1e_YT", "https://raw.githubusercontent.com/Kolandone/v2raycollector/main/config_lite.txt",
+        "https://raw.githubusercontent.com/Syavar/V2ray-Configs/main/OK_telegram.org.txt", "https://raw.githubusercontent.com/Syavar/V2ray-Configs/main/OK_whatsapp.com.txt",
+        "https://raw.githubusercontent.com/skywrt/v2ray-configs/main/Config%20list15.txt", "https://raw.githubusercontent.com/skywrt/v2ray-configs/main/Config%20list49.txt",
+        "https://raw.githubusercontent.com/MahsaNetConfigTopic/config/main/xray_final.txt", "https://raw.githubusercontent.com/SamanGho/v2ray_collector/main/v2tel_links1.txt",
+        "https://raw.githubusercontent.com/SoliSpirit/v2ray-configs/main/Countries/Tr.txt", "https://raw.githubusercontent.com/SoliSpirit/v2ray-configs/main/Countries/Us.txt",
+        "https://raw.githubusercontent.com/Surfboardv2ray/TGParse/main/python/splitter.py", "https://raw.githubusercontent.com/Syavar/V2ray-Configs/main/OK_TLS_viber.com.txt",
+        "https://raw.githubusercontent.com/arshiacomplus/v2rayExtractor/main/mix/sub.html", "https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/v2ray.txt",
+        "https://raw.githubusercontent.com/Mahdi0024/ProxyCollector/master/sub/proxies.txt", "https://raw.githubusercontent.com/Surfboardv2ray/TGParse/main/backups/tg-parser_1",
+        "https://raw.githubusercontent.com/Syavar/V2ray-Configs/main/OK_TLS_google.com.txt", "https://raw.githubusercontent.com/Syavar/V2ray-Configs/main/OK_activision.com.txt",
+        "https://raw.githubusercontent.com/Syavar/V2ray-Configs/main/OK_css.rbxcdn.com.txt", "https://raw.githubusercontent.com/youfoundamin/V2rayCollector/main/mixed_iran.txt",
+        "https://raw.githubusercontent.com/Epodonios/v2ray-configs/main/All_Configs_Sub.txt", "https://raw.githubusercontent.com/iboxz/free-v2ray-collector/main/main/shadowsocks",
+        "https://raw.githubusercontent.com/Argh94/V2RayAutoConfig/main/configs/Hysteria2.txt", "https://raw.githubusercontent.com/Farid-Karimi/Config-Collector/main/mixed_iran.txt",
+        "https://raw.githubusercontent.com/MhdiTaheri/V2rayCollector_Py/main/sub/Mix/mix.txt", "https://raw.githubusercontent.com/Surfboardv2ray/TGParse/main/backups/main-parser_1",
+        "https://raw.githubusercontent.com/Syavar/V2ray-Configs/main/OK_TLS_telegram.org.txt", "https://raw.githubusercontent.com/Syavar/V2ray-Configs/main/OK_whatsapp.com.txt",
+        "https://raw.githubusercontent.com/Syavar/V2ray-Configs/main/OK_activision.com.txt", "https://raw.githubusercontent.com/Syavar/V2ray-Configs/main/OK_TLS_css.rbxcdn.com.txt",
+        "https://raw.githubusercontent.com/mahdibland/ShadowsocksAggregator/master/Eternity.txt", "https://raw.githubusercontent.com/Syavar/V2ray-Configs/main/OK_speedtest.tinkoff.ru.txt",
+        "https://raw.githubusercontent.com/Kwinshadow/TelegramV2rayCollector/main/sublinks/ss.txt", "https://raw.githubusercontent.com/Kwinshadow/TelegramV2rayCollector/main/sublinks/mix.txt",
+        "https://raw.githubusercontent.com/skywrt/v2ray-configs/main/Splitted-By-Protocol/vmess.txt", "https://raw.githubusercontent.com/Kwinshadow/TelegramV2rayCollector/main/sublinks/vless.txt",
+        "https://raw.githubusercontent.com/Kwinshadow/TelegramV2rayCollector/main/sublinks/vmess.txt", "https://raw.githubusercontent.com/SoliSpirit/v2ray-configs/main/Countries/Liechtenstein.txt",
+        "https://raw.githubusercontent.com/Syavar/V2ray-Configs/main/OK_TLS_speedtest.tinkoff.ru.txt", "https://raw.githubusercontent.com/Firmfox/Proxify/main/v2ray_configs/mixed/subscription-2.txt",
+        "https://raw.githubusercontent.com/SoliSpirit/v2ray-configs/main/Countries/North_Macedonia.txt", "https://raw.githubusercontent.com/10ium/ScrapeAndCategorize/main/output_configs/Turkmenistan.txt",
+        "https://raw.githubusercontent.com/MrAbolfazlNorouzi/iran-configs/main/configs/working-configs.txt", "https://raw.githubusercontent.com/ebrasha/free-v2ray-public-list/main/V2Ray-Config-By-EbraSha.txt",
+        "https://raw.githubusercontent.com/MatinGhanbari/v2ray-configs/main/subscriptions/v2ray/subs/sub1.txt", "https://raw.githubusercontent.com/mohamadfg-dev/telegram-v2ray-configs-collector/main/category/xhttp.txt",
+        "https://raw.githubusercontent.com/mohamadfg-dev/telegram-v2ray-configs-collector/main/category/httpupgrade.txt", "https://raw.githubusercontent.com/MrMohebi/xray-proxy-grabber-telegram/master/collected-proxies/row-url/all.txt",
+        "https://raw.githubusercontent.com/MrMohebi/xray-proxy-grabber-telegram/master/collected-proxies/row-url/actives.txt"
+    ]
+}
+
+DEFAULT_CONFIG = {
+    "core_path": "xray",  # путь до ядра, просто xray если лежит в обнимку с скриптом
+    "threads": 20,        # Потоки
+    "timeout": 3,         # Таймаут (повышать в случае огромного пинга)
+    "local_port_start": 1080, # Отвечает за то, с какого конкретно порта будут запускаться ядра, 1080 > 1081 > 1082 = три потока(три ядра)
+    "test_domain": "https://www.google.com/generate_204", # Ссылка по которой будут чекаться прокси, можно использовать другие в случае блокировок в разных странах.(http://cp.cloudflare.com/generate_204)
+    "output_file": "sortedProxy.txt", # имя файла с отфильтрованными проксями
+    "core_startup_timeout": 2.5, # Максимальное время ожидания старта ядра(ну если тупит)
+    "core_kill_delay": 0.05,     # Задержка после УБИЙСТВА
+    "shuffle": False,
+    "sources": DEFAULT_SOURCES # Ссылки с проксями
+}
+
+def load_config():
+    if not os.path.exists(CONFIG_FILE):
+        try:
+            with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
+                json.dump(DEFAULT_CONFIG, f, indent=4)
+            print(f"Created default {CONFIG_FILE}")
+        except: pass
+        return DEFAULT_CONFIG
+    
+    try:
+        with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
+            user_config = json.load(f)
+            config = DEFAULT_CONFIG.copy()
+            config.update(user_config)
+            return config
+    except Exception as e:
+        print(f"Error loading config: {e}")
+        return DEFAULT_CONFIG
+
+GLOBAL_CFG = load_config()
 
 PROTO_HINTS = ("vless://", "vmess://", "trojan://", "hysteria2://", "hy2://", "ss://")
 
@@ -115,7 +245,7 @@ def safe_print(msg):
 
 TEMP_DIR = tempfile.mkdtemp()
 OS_SYSTEM = platform.system().lower()
-CORE_PATH = "" # оставь пустым если ядро лежит прям в обнимку с скриптом
+CORE_PATH = ""
 CTRL_C = False
 
 LOGO_ASCII = r"""
@@ -144,6 +274,16 @@ def is_port_in_use(port):
             return s.connect_ex(('127.0.0.1', port)) == 0
     except:
         return False
+
+
+def wait_for_core_start(port, max_wait):
+    start_time = time.time()
+    while time.time() - start_time < max_wait:
+        if is_port_in_use(port):
+            return True
+        time.sleep(0.05) 
+    return False
+
 
 def split_list(lst, n):
     if n <= 0: return []
@@ -692,10 +832,15 @@ def Checker(proxyList, localPort, testDomain, timeOut, t2exec, t2kill):
             except: pass
             continue
 
-        time.sleep(t2exec)
+        is_ready = wait_for_core_start(localPort, t2exec)
         
-        if proc.poll() is not None:
-            safe_print(f"{Fore.RED}[Dead] {tag[:15]}.. -> Core crashed{Style.RESET_ALL}")
+        if not is_ready:
+            if proc.poll() is not None:
+                safe_print(f"{Fore.RED}[Dead] {tag[:15]}.. -> Core crashed{Style.RESET_ALL}")
+            else:
+                safe_print(f"{Fore.RED}[Dead] {tag[:15]}.. -> Core timeout (port not open){Style.RESET_ALL}")
+            
+            kill_core(proc)
             try: os.remove(configName)
             except: pass
             continue
@@ -769,6 +914,23 @@ def run_logic(args):
         links = fetch_url(args.url)
         lines.update(links)
 
+    if AGGREGATOR_AVAILABLE and getattr(args, 'agg', False):
+        safe_print(f"{Fore.CYAN}>> Запуск агрегатора через CLI...{Style.RESET_ALL}")
+        sources_map = GLOBAL_CFG.get("sources", {})
+        cats = args.agg_cats if args.agg_cats else list(sources_map.keys())
+        kws = args.agg_filter if args.agg_filter else []
+        
+        try:
+            agg_links = aggregator.get_aggregated_links(sources_map, cats, kws, log_func=safe_print)
+            lines.update(agg_links)
+        except Exception as e:
+            safe_print(f"{Fore.RED}Ошибка агрегатора CLI: {e}{Style.RESET_ALL}")
+
+    if hasattr(args, 'direct_list') and args.direct_list:
+        safe_print(f"{Fore.CYAN}>> Получено из агрегатора: {len(args.direct_list)} шт.{Style.RESET_ALL}")
+        parsed_agg, _ = parse_content("\n".join(args.direct_list))
+        lines.update(parsed_agg)
+
     if args.reuse and os.path.exists(args.output):
         with open(args.output, 'r', encoding='utf-8') as f:
             parsed, count = parse_content(f.read())
@@ -829,7 +991,8 @@ def run_logic(args):
 def print_banner():
     os.system('cls' if os.name == 'nt' else 'clear')
     print(Fore.CYAN + LOGO_ASCII + Style.RESET_ALL)
-    safe_print(f"{Fore.MAGENTA}          by mkultra69  |  https://t.me/MKextera{Style.RESET_ALL}")
+    safe_print(Fore.CYAN + "                 MK_XRAYchecker by mkultra69 with HATE" + Style.RESET_ALL)
+    safe_print(f"{Fore.MAGENTA}                      https://t.me/MKextera{Style.RESET_ALL}")
     print(Fore.LIGHTBLACK_EX + "─"*75 + Style.RESET_ALL)
 
 def interactive_menu():
@@ -838,7 +1001,11 @@ def interactive_menu():
         print(f"{Fore.LIGHTWHITE_EX} [ ИСТОЧНИК ]{Style.RESET_ALL}")
         print(f"  {Fore.GREEN}1.{Style.RESET_ALL} Загрузить из файла (.txt)")
         print(f"  {Fore.GREEN}2.{Style.RESET_ALL} Загрузить по ссылке (URL)")
-        print(f"  {Fore.GREEN}3.{Style.RESET_ALL} Перепроверить (sortedProxy.txt)")
+        print(f"  {Fore.GREEN}3.{Style.RESET_ALL} Перепроверить ({GLOBAL_CFG['output_file']})")
+        
+        if AGGREGATOR_AVAILABLE:
+            print(f"  {Fore.CYAN}4. АГРЕГАТОР + ЧЕКЕР (Скачать и проверить){Style.RESET_ALL}")
+        
         print(f"\n{Fore.LIGHTWHITE_EX} [ ДЕЙСТВИЕ ]{Style.RESET_ALL}")
         print(f"  {Fore.RED}0.{Style.RESET_ALL} Выход")
         print(Fore.LIGHTBLACK_EX + "─"*75 + Style.RESET_ALL)
@@ -847,15 +1014,21 @@ def interactive_menu():
         
         defaults = {
             "file": None, "url": None, "reuse": False,
-            "domain": 'http://www.gstatic.com/generate_204', # домен для теста
-            "timeout": 3, "lport": 1080, "threads": 20, 
-            "core": "xray", "t2exec": 0.8, "t2kill": 0.1, 
-            "output": 'sortedProxy.txt', "shuffle": False, "number": None, # sortedProxy.txt
+            "domain": GLOBAL_CFG['test_domain'],
+            "timeout": GLOBAL_CFG['timeout'], 
+            "lport": GLOBAL_CFG['local_port_start'], 
+            "threads": GLOBAL_CFG['threads'], 
+            "core": GLOBAL_CFG['core_path'], 
+            "t2exec": GLOBAL_CFG['core_startup_timeout'], 
+            "t2kill": GLOBAL_CFG['core_kill_delay'], 
+            "output": GLOBAL_CFG['output_file'], 
+            "shuffle": GLOBAL_CFG['shuffle'], 
+            "number": None,
+            "direct_list": None,
             "menu": True
         }
         
         if ch == '0':
-            print(f"\n{Fore.MAGENTA}ПОДПИШИСЬ https://t.me/MKextera{Style.RESET_ALL}")
             sys.exit()
         
         if ch == '1':
@@ -873,17 +1046,30 @@ def interactive_menu():
         elif ch == '3':
             defaults["reuse"] = True
             
+            
+        elif ch == '4' and AGGREGATOR_AVAILABLE:
+            print(f"\n{Fore.CYAN}--- Настройки Агрегатора ---{Style.RESET_ALL}")
+            print(f"Доступные категории: {', '.join(GLOBAL_CFG.get('sources', {}).keys())}")
+            cats = input("Введите категории (пример: 1 2): ").split()
+            kws = input("Ключевые слова (пример: vless reality): ").split()
+            
+            sources_map = GLOBAL_CFG.get("sources", {})
+            
+            try:
+                raw_links = aggregator.get_aggregated_links(sources_map, cats, kws, log_func=safe_print)
+                if not raw_links:
+                    safe_print(f"{Fore.RED}Ничего не найдено агрегатором.{Style.RESET_ALL}")
+                    time.sleep(2)
+                    continue
+                defaults["direct_list"] = raw_links
+            except Exception as e:
+                safe_print(f"{Fore.RED}Ошибка агрегатора: {e}{Style.RESET_ALL}")
+                continue
+
+  
+
         else:
             continue
-        
-        print(f"\n{Fore.LIGHTBLACK_EX}--- Настройки (Enter = стандартно) ---{Style.RESET_ALL}")
-        try:
-            th = input(f" Потоки [{Fore.GREEN}20{Style.RESET_ALL}]: ").strip()
-            if th: defaults["threads"] = int(th)
-            
-            to = input(f" Таймаут [{Fore.GREEN}3{Style.RESET_ALL}]: ").strip()
-            if to: defaults["timeout"] = int(to)
-        except: pass
 
         args = SimpleNamespace(**defaults)
         
@@ -904,16 +1090,20 @@ def main():
     parser.add_argument("-f", "--file")
     parser.add_argument("-u", "--url")
     parser.add_argument("--reuse", action="store_true")
-    parser.add_argument("-t", "--timeout", type=int, default=3)
-    parser.add_argument("-l", "--lport", type=int, default=1080)
-    parser.add_argument("-T", "--threads", type=int, default=20)
-    parser.add_argument("-c", "--core", default="xray")
-    parser.add_argument("--t2exec", type=float, default=1.0) # время на запуск ядра для каждого потока. (в секундах) если очень много ошибок, стоит попробовать повысить время.
-    parser.add_argument("--t2kill", type=float, default=0.1)
-    parser.add_argument("-o", "--output", default="sorted.txt") # тут вот тоже ручками можно аутпут файлик прописать
-    parser.add_argument("-d", "--domain", default='http://cp.cloudflare.com/generate_204') # ссылка через которую проверются прокси, условно для Иранских, стоит заменить с google на например: http://cp.cloudflare.com/generate_204
-    parser.add_argument("-s", "--shuffle", action='store_true')
+    
+    parser.add_argument("-t", "--timeout", type=int, default=GLOBAL_CFG['timeout'])
+    parser.add_argument("-l", "--lport", type=int, default=GLOBAL_CFG['local_port_start'])
+    parser.add_argument("-T", "--threads", type=int, default=GLOBAL_CFG['threads'])
+    parser.add_argument("-c", "--core", default=GLOBAL_CFG['core_path'])
+    parser.add_argument("--t2exec", type=float, default=GLOBAL_CFG['core_startup_timeout'])
+    parser.add_argument("--t2kill", type=float, default=GLOBAL_CFG['core_kill_delay'])
+    parser.add_argument("-o", "--output", default=GLOBAL_CFG['output_file'])
+    parser.add_argument("-d", "--domain", default=GLOBAL_CFG['test_domain'])
+    parser.add_argument("-s", "--shuffle", action='store_true', default=GLOBAL_CFG['shuffle'])
     parser.add_argument("-n", "--number", type=int)
+    parser.add_argument("--agg", action="store_true", help="Запустить агрегатор")
+    parser.add_argument("--agg-cats", nargs='+', help="Категории для агрегатора (например: 1 2)")
+    parser.add_argument("--agg-filter", nargs='+', help="Ключевые слова для фильтра (например: vless reality)")
 
     if len(sys.argv) == 1:
         interactive_menu()
