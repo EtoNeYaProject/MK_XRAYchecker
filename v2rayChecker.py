@@ -64,9 +64,10 @@ except ImportError:
 
 # cfg
 CONFIG_FILE = "config.json"
+SOURCES_FILE = "sources.json"
 
 # Стандартные истончники проксей
-DEFAULT_SOURCES = {
+DEFAULT_SOURCES_DATA = {
     "1": [
         "https://sub.amiralter.com/config", "https://itsyebekhe.github.io/PSG/", "https://f0rc3run.github.io/F0rc3Run-panel/", 
         "https://raw.githubusercontent.com/mermeroo/QX/main/Nodes", "https://raw.githubusercontent.com/Ashkan-m/v2ray/main/VIP.txt",
@@ -165,28 +166,57 @@ DEFAULT_CONFIG = {
     "shuffle": False,
     "check_speed": False,
     "sort_by": "ping", # ping | speed
-    "sources": DEFAULT_SOURCES # Ссылки с проксями
+    "sources": {} # Переезд в отделный .json
 }
 
+def load_sources():
+    if os.path.exists(SOURCES_FILE):
+        try:
+            with open(SOURCES_FILE, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                if isinstance(data, dict):
+                    return data
+        except Exception as e:
+            print(f"Error loading {SOURCES_FILE}: {e}")
+    
+    try:
+        with open(SOURCES_FILE, 'w', encoding='utf-8') as f:
+            json.dump(DEFAULT_SOURCES_DATA, f, indent=4)
+        print(f"Created default {SOURCES_FILE}")
+    except Exception as e:
+        print(f"Error creating {SOURCES_FILE}: {e}")
+    
+    return DEFAULT_SOURCES_DATA
+
 def load_config():
+    loaded_sources = load_sources()
+
     if not os.path.exists(CONFIG_FILE):
         try:
+            config_to_write = DEFAULT_CONFIG.copy()
+            del config_to_write["sources"] 
+            
             with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
-                json.dump(DEFAULT_CONFIG, f, indent=4)
+                json.dump(config_to_write, f, indent=4)
             print(f"Created default {CONFIG_FILE}")
         except: pass
-        return DEFAULT_CONFIG
+        cfg = DEFAULT_CONFIG.copy()
+        cfg["sources"] = loaded_sources
+        return cfg
     
     try:
         with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
             user_config = json.load(f)
         
         config = DEFAULT_CONFIG.copy()
-        
         config.update(user_config)
         
+        config["sources"] = loaded_sources
+        
         has_new_keys = False
-        for key in DEFAULT_CONFIG:
+        keys_to_check = [k for k in DEFAULT_CONFIG.keys() if k != "sources"]
+        
+        for key in keys_to_check:
             if key not in user_config:
                 has_new_keys = True
                 break
@@ -194,15 +224,20 @@ def load_config():
         if has_new_keys:
             try:
                 print(f">> Обновление {CONFIG_FILE}: добавлены новые параметры...")
+                save_cfg = config.copy()
+                if "sources" in save_cfg: del save_cfg["sources"]
+                
                 with open(CONFIG_FILE, 'w', encoding='utf-8') as f:
-                    json.dump(config, f, indent=4)
+                    json.dump(save_cfg, f, indent=4)
             except Exception as e:
                 print(f"Warning: Не удалось обновить конфиг файл: {e}")
 
         return config
     except Exception as e:
         print(f"Error loading config: {e}")
-        return DEFAULT_CONFIG
+        cfg = DEFAULT_CONFIG.copy()
+        cfg["sources"] = loaded_sources
+        return cfg
 
 GLOBAL_CFG = load_config()
 
