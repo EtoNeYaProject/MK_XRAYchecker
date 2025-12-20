@@ -31,7 +31,7 @@ while True:
     os.rename("sortedProxy.txt", namefile)
     app = Client("bot", api_id=2860432, api_hash="2fde6ca0f8ae7bb58844457a239c7214", bot_token=token)
     with app:
-        app.send_document(log_id, document=namefile, caption=f"С аргументами: {args.replace('--', "-")}\nТеперь спать на {sleep_time}сек")
+        app.send_document(log_id, document=namefile, caption=f"С аргументами: {args.replace('--', '-')}\nТеперь спать на {sleep_time}сек")
     os.remove(namefile)
 
     print(f"Сон {sleep_time} секунд")
