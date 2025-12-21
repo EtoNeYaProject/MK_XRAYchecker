@@ -19,7 +19,7 @@
 # ║                                  mk69.su                                ║
 # +═════════════════════════════════════════════════════════════════════════+
 # +═════════════════════════════════════════════════════════════════════════+
-# ║                           VERSION 1.0.0 batch check                     ║
+# ║                           VERSION 1.0.1 HOTFIX                          ║
 # ║             В случае багов/недочётов создайте issue на github           ║
 # ║                                                                         ║
 # +═════════════════════════════════════════════════════════════════════════+
@@ -309,7 +309,6 @@ def clean_url(url):
 
 ANSI_ESCAPE = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
 
-    
 class SmartLogger:
     def __init__(self, filename="checker_history.log"):
         self.filename = filename
@@ -343,6 +342,42 @@ logging.basicConfig(format="%(asctime)s - %(message)s", level=logging.INFO, date
 
 def safe_print(msg):
     MAIN_LOGGER.log(msg)
+    
+def upload_log_to_service(is_crash=False):
+    log_file = "checker_history.log"
+    if not os.path.exists(log_file):
+        console.print("[red]Файл лога не найден.[/]")
+        return
+
+    console.print("[yellow]Отправка лога в облако (paste.rs)...[/]")
+    try:
+        with open(log_file, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+            content = "".join(lines[-1500:])
+
+        resp = requests.post(
+            "https://paste.rs",
+            data=content.encode('utf-8'),
+            headers={
+                "Content-Type": "text/plain",
+                "User-Agent": "v2rayChecker-MKultra"
+            },
+            timeout=15
+        )
+
+        if resp.status_code in (200, 201):
+            url = resp.text.strip()
+            if "paste.rs" in url:
+                console.print(Panel(f"Лог успешно загружен!\n[bold cyan]{url}[/]", title="Upload Success", border_style="green"))
+                return url
+        
+        console.print(f"[red]Ошибка сервиса: HTTP {resp.status_code}[/]")
+        if resp.text:
+            safe_print(f"[dim]Ответ сервера: {resp.text[:50]}[/]")
+            
+    except Exception as e:
+        console.print(f"[red]Не удалось загрузить лог: {e}[/]")
+    return None
 
 TEMP_DIR = tempfile.mkdtemp()
 OS_SYSTEM = platform.system().lower()
@@ -632,11 +667,14 @@ def parse_trojan(url):
         parsed = urllib.parse.urlparse(url_clean)
         params = urllib.parse.parse_qs(parsed.query)
         
+        if not parsed.hostname or not parsed.port:
+            return None
+
         return {
             "protocol": "trojan",
             "uuid": parsed.username,
             "address": parsed.hostname,
-            "port": parsed.port,
+            "port": int(parsed.port),
             "security": params.get("security", ["tls"])[0],
             "sni": params.get("sni", [""])[0] or params.get("peer", [""])[0],
             "type": params.get("type", ["tcp"])[0],
@@ -659,7 +697,7 @@ def parse_ss(url):
         if '@' in url_clean:
             userinfo = parsed.username
             try:
-                if ':' not in userinfo:
+                if userinfo and ':' not in userinfo:
                     missing_padding = len(userinfo) % 4
                     if missing_padding: userinfo += '=' * (4 - missing_padding)
                     decoded_info = base64.b64decode(userinfo).decode('utf-8')
@@ -668,6 +706,7 @@ def parse_ss(url):
             except:
                 decoded_info = userinfo
             
+            if not decoded_info or ':' not in decoded_info: return None
             method, password = decoded_info.split(':', 1)
             address = parsed.hostname
             port = parsed.port
@@ -676,15 +715,17 @@ def parse_ss(url):
             missing_padding = len(b64) % 4
             if missing_padding: b64 += '=' * (4 - missing_padding)
             decoded = base64.b64decode(b64).decode('utf-8')
+            if '@' not in decoded: return None
             method_pass, addr_port = decoded.rsplit('@', 1)
             method, password = method_pass.split(':', 1)
             address, port = addr_port.rsplit(':', 1)
-            port = int(port)
+
+        if not address or not port: return None
 
         return {
             "protocol": "shadowsocks",
             "address": address,
-            "port": port,
+            "port": int(port),
             "method": method,
             "password": password,
             "tag": urllib.parse.unquote(tag).strip()
@@ -703,11 +744,14 @@ def parse_hysteria2(url):
         parsed = urllib.parse.urlparse(url_clean)
         params = urllib.parse.parse_qs(parsed.query)
         
+        if not parsed.hostname or not parsed.port:
+            return None
+
         return {
             "protocol": "hysteria2",
             "uuid": parsed.username,
             "address": parsed.hostname,
-            "port": parsed.port,
+            "port": int(parsed.port),
             "sni": params.get("sni", [""])[0],
             "insecure": params.get("insecure", ["0"])[0] == "1",
             "obfs": params.get("obfs", ["none"])[0],
@@ -717,86 +761,112 @@ def parse_hysteria2(url):
     except: return None
 
 def get_proxy_tag(url):
+    tag = "proxy"
     try:
         url = clean_url(url)
         if '#' in url:
-            _, tag = url.rsplit('#', 1)
-            return urllib.parse.unquote(tag).strip()
+            _, raw_tag = url.rsplit('#', 1)
+            tag = urllib.parse.unquote(raw_tag).strip()
+        elif url.startswith("vmess"): 
+            res = parse_vmess(url)
+            if res: tag = res.get('tag', 'vmess')
     except: 
         pass
     
+    tag = re.sub(r'[^\w\-\.]', '_', tag)
+    return tag if tag else "proxy"
+
+def is_valid_uuid(uuid_str):
+    if not uuid_str: return False
+    pattern = re.compile(r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$')
+    return bool(pattern.match(str(uuid_str)))
+
+def is_valid_port(port):
     try:
-        if url.startswith("vmess"): 
-            res = parse_vmess(url)
-            if res: return res.get('tag', 'vmess')
-    except: pass
-    
-    return "proxy"
+        p = int(port)
+        return 1 <= p <= 65535
+    except: return False
 
 def get_outbound_structure(proxy_url, tag):
-    """Преобразует URL в структуру outbound для Xray JSON"""
-    proxy_url = clean_url(proxy_url)
-    proxy_conf = None
-    
-    if proxy_url.startswith("vless://"): proxy_conf = parse_vless(proxy_url)
-    elif proxy_url.startswith("vmess://"): proxy_conf = parse_vmess(proxy_url)
-    elif proxy_url.startswith("trojan://"): proxy_conf = parse_trojan(proxy_url)
-    elif proxy_url.startswith("ss://"): proxy_conf = parse_ss(proxy_url)
-    elif proxy_url.startswith("hy"): proxy_conf = parse_hysteria2(proxy_url)
-    
-    if not proxy_conf: return None
+    try:
+        proxy_url = clean_url(proxy_url)
+        proxy_conf = None
+        
+        if proxy_url.startswith("vless://"): proxy_conf = parse_vless(proxy_url)
+        elif proxy_url.startswith("vmess://"): proxy_conf = parse_vmess(proxy_url)
+        elif proxy_url.startswith("trojan://"): proxy_conf = parse_trojan(proxy_url)
+        elif proxy_url.startswith("ss://"): proxy_conf = parse_ss(proxy_url)
+        elif proxy_url.startswith("hy"): proxy_conf = parse_hysteria2(proxy_url)
+        
+        if not proxy_conf or not proxy_conf.get("address"):
+            return None
+            
+        if not is_valid_port(proxy_conf.get("port")):
+            return None
 
-    streamSettings = {}
-    if proxy_conf["protocol"] in ["vless", "vmess", "trojan"]:
-        streamSettings = {
-            "network": proxy_conf.get("type", "tcp"),
-            "security": proxy_conf.get("security", "none")
-        }
-        if streamSettings["security"] == "tls":
-            streamSettings["tlsSettings"] = {
-                "serverName": proxy_conf.get("sni") or proxy_conf.get("host"),
-                "allowInsecure": True,
-                "fingerprint": proxy_conf.get("fp", "")
-            }
-        elif streamSettings["security"] == "reality":
-             streamSettings["realitySettings"] = {
-                "publicKey": proxy_conf.get("pbk"),
-                "shortId": proxy_conf.get("sid"),
-                "serverName": proxy_conf.get("sni"),
-                "fingerprint": proxy_conf.get("fp", "chrome")
-            }
-        if streamSettings["network"] == "ws":
-            streamSettings["wsSettings"] = {
-                "path": proxy_conf.get("path", "/"),
-                "headers": {"Host": proxy_conf.get("host", "")}
-            }
-        elif streamSettings["network"] == "grpc":
-            streamSettings["grpcSettings"] = {
-                "serviceName": proxy_conf.get("serviceName", "") or proxy_conf.get("path", "") or "grpc",
-                "multiMode": False
-            }
+        if proxy_conf["protocol"] in ["vless", "vmess"]:
+            if not is_valid_uuid(proxy_conf.get("uuid")):
+                return None
 
-    outbound = {"protocol": proxy_conf["protocol"], "tag": tag, "streamSettings": streamSettings}
+        if proxy_conf["protocol"] in ["trojan", "hysteria2"]:
+            if not proxy_conf.get("uuid"): return None
+        if proxy_conf["protocol"] == "shadowsocks":
+            if not proxy_conf.get("password") or not proxy_conf.get("method"): return None
 
-    if proxy_conf["protocol"] == "shadowsocks":
-        method = proxy_conf["method"].lower()
-        if method == "chacha20-ietf": method = "chacha20-ietf-poly1305"
-        outbound["settings"] = {"servers": [{"address": proxy_conf["address"], "port": int(proxy_conf["port"]), "method": method, "password": proxy_conf["password"]}]}
-        outbound.pop("streamSettings", None)
-    elif proxy_conf["protocol"] == "trojan":
-        outbound["settings"] = {"servers": [{"address": proxy_conf["address"], "port": int(proxy_conf["port"]), "password": proxy_conf["uuid"]}]}
-    elif proxy_conf["protocol"] == "hysteria2":
-        hy2_settings = {"address": proxy_conf["address"], "port": int(proxy_conf["port"]), "users": [{"password": proxy_conf["uuid"]}]}
-        if proxy_conf.get("obfs") and proxy_conf.get("obfs") != "none":
-             hy2_settings["obfs"] = {"type": proxy_conf["obfs"], "password": proxy_conf.get("obfs_password", "")}
-        outbound["settings"] = {"vnext": [hy2_settings]}
-        outbound["streamSettings"] = {"security": "tls", "tlsSettings": {"serverName": proxy_conf.get("sni", ""), "allowInsecure": proxy_conf.get("insecure", False)}}
-    else:
-        outbound["settings"] = {"vnext": [{
-            "address": proxy_conf["address"], "port": int(proxy_conf["port"]),
-            "users": [{"id": proxy_conf["uuid"], "alterId": proxy_conf.get("aid", 0), "encryption": "none", "flow": proxy_conf.get("flow", "")}]
-        }]}
-    return outbound
+        streamSettings = {}
+        if proxy_conf["protocol"] in ["vless", "vmess", "trojan"]:
+            streamSettings = {
+                "network": proxy_conf.get("type", "tcp"),
+                "security": proxy_conf.get("security", "none")
+            }
+            if streamSettings["security"] == "tls":
+                streamSettings["tlsSettings"] = {
+                    "serverName": proxy_conf.get("sni") or proxy_conf.get("host"),
+                    "allowInsecure": True,
+                    "fingerprint": proxy_conf.get("fp", "")
+                }
+            elif streamSettings["security"] == "reality":
+                 streamSettings["realitySettings"] = {
+                    "publicKey": proxy_conf.get("pbk"),
+                    "shortId": proxy_conf.get("sid"),
+                    "serverName": proxy_conf.get("sni"),
+                    "fingerprint": proxy_conf.get("fp", "chrome")
+                }
+            
+            net_type = streamSettings["network"]
+            if net_type == "ws":
+                streamSettings["wsSettings"] = {
+                    "path": proxy_conf.get("path") or "/",
+                    "headers": {"Host": proxy_conf.get("host", "")}
+                }
+            elif net_type == "grpc":
+                streamSettings["grpcSettings"] = {
+                    "serviceName": proxy_conf.get("serviceName") or proxy_conf.get("path") or "grpc"
+                }
+
+        outbound = {"protocol": proxy_conf["protocol"], "tag": tag, "streamSettings": streamSettings}
+
+        if proxy_conf["protocol"] == "shadowsocks":
+            method = proxy_conf["method"].lower()
+            if "chacha20-ietf" in method and "poly1305" not in method: method = "chacha20-ietf-poly1305"
+            outbound["settings"] = {"servers": [{"address": proxy_conf["address"], "port": int(proxy_conf["port"]), "method": method, "password": proxy_conf["password"]}]}
+            outbound.pop("streamSettings", None)
+        elif proxy_conf["protocol"] == "trojan":
+            outbound["settings"] = {"servers": [{"address": proxy_conf["address"], "port": int(proxy_conf["port"]), "password": proxy_conf["uuid"]}]}
+        elif proxy_conf["protocol"] == "hysteria2":
+            hy2_settings = {"address": proxy_conf["address"], "port": int(proxy_conf["port"]), "users": [{"password": proxy_conf["uuid"]}]}
+            if proxy_conf.get("obfs") and proxy_conf.get("obfs") != "none":
+                 hy2_settings["obfs"] = {"type": proxy_conf["obfs"], "password": proxy_conf.get("obfs_password", "")}
+            outbound["settings"] = {"vnext": [hy2_settings]}
+            outbound["streamSettings"] = {"security": "tls", "tlsSettings": {"serverName": proxy_conf.get("sni", ""), "allowInsecure": True}}
+        else:
+            outbound["settings"] = {"vnext": [{
+                "address": proxy_conf["address"], "port": int(proxy_conf["port"]),
+                "users": [{"id": proxy_conf["uuid"], "alterId": proxy_conf.get("aid", 0), "encryption": "none", "flow": proxy_conf.get("flow", "")}]
+            }]}
+        return outbound
+    except:
+        return None
 
 def create_batch_config_file(proxy_list, start_port, work_dir):
     inbounds = []
@@ -951,28 +1021,45 @@ def Checker(proxyList, localPortStart, testDomain, timeOut, t2exec, t2kill,
 
     proc = run_core(CORE_PATH, configPath)
     if not proc:
+        safe_print(f"[bold red][BATCH ERROR] Не удалось запустить процесс ядра![/]")
         return current_live_results
 
     if not wait_for_core_start(valid_mapping[0][1], t2exec):
+        try:
+            stderr_output = proc.stderr.read(1024).decode('utf-8', errors='ignore')
+            safe_print(f"[bold red][BATCH FAILED] Ядро не открыло порты. Ошибка Xray:[/]\n[yellow]{stderr_output}[/]")
+        except:
+            safe_print(f"[bold red][BATCH FAILED] Ядро не запустилось (таймаут {t2exec}с)[/]")
         kill_core(proc)
         return current_live_results
-
+    
     def check_single_port(item):
         if CTRL_C: return None
         target_url, target_port = item
+        
+        proxy_speed = 0.0
+        
+        conf = None
+        try:
+            if target_url.startswith("vless://"): conf = parse_vless(target_url)
+            elif target_url.startswith("vmess://"): conf = parse_vmess(target_url)
+            elif target_url.startswith("ss://"): conf = parse_ss(target_url)
+            elif target_url.startswith("trojan://"): conf = parse_trojan(target_url)
+        except: pass
+        
+        addr_info = f"{conf['address']}:{conf['port']}" if conf else "unknown"
         proxy_tag = get_proxy_tag(target_url)
         
         ping_res, error_reason = check_connection(target_port, testDomain, timeOut)
         
-        proxy_speed = 0.0
         if ping_res:
             if checkSpeed:
                 with (speedSemaphore if speedSemaphore else Lock()):
                     proxy_speed = check_speed_download(target_port, speedUrl, **speedCfg)
                 sp_color = "green" if proxy_speed > 15 else "yellow" if proxy_speed > 5 else "red"
-                safe_print(f"[green][LIVE][/] {ping_res}ms | [{sp_color}]{proxy_speed} Mbps[/] | {proxy_tag}")
+                safe_print(f"[green][LIVE][/] [white]{addr_info:<25}[/] | {ping_res:>4}ms | [{sp_color}]{proxy_speed:>5} Mbps[/] | {proxy_tag}")
             else:
-                safe_print(f"[green][LIVE][/] {ping_res}ms | {proxy_tag}")
+                safe_print(f"[green][LIVE][/] [white]{addr_info:<25}[/] | {ping_res:>4}ms | {proxy_tag}")
             
             if progress and task_id is not None:
                 progress.advance(task_id, 1)
@@ -982,7 +1069,7 @@ def Checker(proxyList, localPortStart, testDomain, timeOut, t2exec, t2kill,
             short_err = str(error_reason)
             if "Read timed out" in short_err: short_err = "Timeout"
             elif "Connection aborted" in short_err: short_err = "Conn Aborted"
-            safe_print(f"[yellow][Dead][/] {proxy_tag[:15]}.. -> [dim]{short_err}[/]")
+            safe_print(f"[yellow][Dead][/] [dim]{addr_info:<25}[/] -> [red]{short_err}[/]")
             
             if progress and task_id is not None:
                 progress.advance(task_id, 1)
@@ -1229,11 +1316,12 @@ def interactive_menu():
             table.add_row("4", "Агрегатор", "Скачать базы, объединить и проверить")
         
         table.add_row("5", "Сброс ядер", "Убить все процессы xray")
+        table.add_row("6", "Загрузить лог", "Отправить последние события на paste.rs")
         table.add_row("0", "Выход", "Закрыть программу")
         
         console.print(table)
         
-        valid_choices = ["0", "1", "2", "3", "4", "5"] if AGGREGATOR_AVAILABLE else ["0", "1", "2", "3", "5"]
+        valid_choices = ["0", "1", "2", "3", "4", "5", "6"] if AGGREGATOR_AVAILABLE else ["0", "1", "2", "3", "5", "6"]
         ch = Prompt.ask("[bold yellow]>[/] Выберите действие", choices=valid_choices)
         
         if ch == '0':
@@ -1289,7 +1377,10 @@ def interactive_menu():
         elif ch == '5':
             kill_all_cores_manual()
             continue
-
+        elif ch == '6':
+            upload_log_to_service()
+            Prompt.ask("\nНажмите Enter...", password=False)
+            continue
         if Confirm.ask("Включить тест скорости?", default=False):
             defaults["speed_check"] = True
             defaults["sort_by"] = "speed"
@@ -1307,6 +1398,12 @@ def interactive_menu():
         except Exception as e:
             safe_print(f"[bold red]CRITICAL ERROR: {e}[/]")
             import traceback
+            error_data = traceback.format_exc()
+            MAIN_LOGGER.log(f"CRASH REPORT:\n{error_data}")
+            
+            if Confirm.ask("[bold magenta]Произошла ошибка. Загрузить лог на paste.rs для отладки?[/]", default=True):
+                upload_log_to_service(is_crash=True)
+            
             traceback.print_exc()
         
         Prompt.ask("\n[bold]Нажмите Enter чтобы вернуться в меню...[/]", password=False)
