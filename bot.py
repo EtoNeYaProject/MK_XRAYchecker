@@ -12,7 +12,7 @@ import logging
 # =================================
 version = "1.0"
 log_id = -1003669488656
-token = "8454196980:AAHURJzYbAxxFad-5AcKiiJMbX_rDrg38mI"
+token = ""
 main_link_subs = "https://etoneya.a9fm.site/1"
 test_link_subs = "https://etoneya.a9fm.site/test"
 args = "--timeout 10 --threads 3 --t2kill 5"
@@ -99,7 +99,11 @@ except Exception as e:
 while True:
     try:
         # MAIN
-        os.system(f"python3 v2rayChecker.py -u {main_link_subs} {args}")
+        if platform.system() == "Windows":
+            python_var = "python"
+        else:
+            python_var = "python3"
+        os.system(f"{python_var} v2rayChecker.py -u {main_link_subs} {args}")
         namefile = f"result_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}"
         os.rename("sortedProxy.txt", namefile)
 
@@ -109,7 +113,7 @@ while True:
         os.remove(namefile)
 
         # TEST
-        os.system(f"python3 v2rayChecker.py -u {test_link_subs} {args}")
+        os.system(f"{python_var} v2rayChecker.py -u {test_link_subs} {args}")
         namefile = f"result_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}"
         os.rename("sortedProxy.txt", namefile)
 
