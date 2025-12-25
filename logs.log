@@ -1,0 +1,658 @@
+25-Dec-25 11:56:57 - Xray version: Xray 25.12.8 (Xray, Penetrates Everything.) 81f8f39 (go1.25.5 linux/arm64)
+A unified platform for anti-censorship.
+25-Dec-25 11:57:27 - Connecting...
+25-Dec-25 11:57:27 - Connected! Production DC2 - IPv4
+25-Dec-25 11:57:27 - NetworkTask started
+25-Dec-25 11:57:28 - Time synced: 2025-12-25 11:57:29.437318
+25-Dec-25 11:57:28 - Session initialized: Pyrogram v2.2.12 (Layer 214)
+25-Dec-25 11:57:28 - Device: CPython 3.12.12 - Pyrogram 2.2.12
+25-Dec-25 11:57:28 - System: Linux 5.10.237-android12-9-31999025-abA256EXXS9DYK2 (en)
+25-Dec-25 11:57:28 - Session started
+25-Dec-25 11:57:28 - PingTask started
+25-Dec-25 11:57:28 - Started 12 HandlerTasks
+25-Dec-25 11:57:28 - Connecting...
+25-Dec-25 11:57:29 - Connected! Production DC2 (media) - IPv4
+25-Dec-25 11:57:29 - NetworkTask started
+25-Dec-25 11:57:29 - Session initialized: Pyrogram v2.2.12 (Layer 214)
+25-Dec-25 11:57:29 - Device: CPython 3.12.12 - Pyrogram 2.2.12
+25-Dec-25 11:57:29 - System: Linux 5.10.237-android12-9-31999025-abA256EXXS9DYK2 (en)
+25-Dec-25 11:57:29 - Session started
+25-Dec-25 11:57:29 - PingTask started
+25-Dec-25 11:57:30 - Stopped 12 HandlerTasks
+25-Dec-25 11:57:30 - PingTask stopped
+25-Dec-25 11:57:30 - NetworkTask stopped
+25-Dec-25 11:57:30 - Disconnected
+25-Dec-25 11:57:30 - Session stopped
+25-Dec-25 11:57:30 - PingTask stopped
+25-Dec-25 11:57:30 - NetworkTask stopped
+25-Dec-25 11:57:30 - Disconnected
+25-Dec-25 11:57:30 - Session stopped
+25-Dec-25 11:57:45 - Connecting...
+25-Dec-25 11:57:45 - Connected! Production DC2 - IPv4
+25-Dec-25 11:57:45 - NetworkTask started
+25-Dec-25 11:57:46 - Time synced: 2025-12-25 11:57:47.471723
+25-Dec-25 11:57:46 - Session initialized: Pyrogram v2.2.12 (Layer 214)
+25-Dec-25 11:57:46 - Device: CPython 3.12.12 - Pyrogram 2.2.12
+25-Dec-25 11:57:46 - System: Linux 5.10.237-android12-9-31999025-abA256EXXS9DYK2 (en)
+25-Dec-25 11:57:46 - Session started
+25-Dec-25 11:57:46 - PingTask started
+25-Dec-25 11:57:47 - Started 12 HandlerTasks
+25-Dec-25 11:57:47 - Stopped 12 HandlerTasks
+25-Dec-25 11:57:47 - PingTask stopped
+25-Dec-25 11:57:47 - NetworkTask stopped
+25-Dec-25 11:57:47 - Disconnected
+25-Dec-25 11:57:47 - Session stopped
+25-Dec-25 11:57:47 - Unexpected error in main loop
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/checker/bot.py", line 134, in <module>
+    app.send_document(log_id, document=namefile, caption=f"TEST\nС аргументами: {args.replace('--', '-')}\nТеперь спать на {sleep_time}сек")
+  File "/data/data/com.termux/files/usr/lib/python3.12/site-packages/pyrogram/sync.py", line 66, in async_to_sync_wrap
+    return loop.run_until_complete(coroutine)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.12/site-packages/pyrogram/methods/messages/send_document.py", line 253, in send_document
+    file = await self.save_file(document, progress=progress, progress_args=progress_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.12/site-packages/pyrogram/methods/advanced/save_file.py", line 129, in save_file
+    raise ValueError("File size equals to 0 B")
+ValueError: File size equals to 0 B
+25-Dec-25 11:59:27 - Connecting...
+25-Dec-25 11:59:27 - Connected! Production DC2 - IPv4
+25-Dec-25 11:59:27 - NetworkTask started
+25-Dec-25 11:59:27 - Time synced: 2025-12-25 11:59:28.891231
+25-Dec-25 11:59:27 - Session initialized: Pyrogram v2.2.12 (Layer 214)
+25-Dec-25 11:59:27 - Device: CPython 3.12.12 - Pyrogram 2.2.12
+25-Dec-25 11:59:27 - System: Linux 5.10.237-android12-9-31999025-abA256EXXS9DYK2 (en)
+25-Dec-25 11:59:27 - Session started
+25-Dec-25 11:59:27 - PingTask started
+25-Dec-25 11:59:28 - Started 12 HandlerTasks
+25-Dec-25 11:59:28 - Connecting...
+25-Dec-25 11:59:28 - Connected! Production DC2 (media) - IPv4
+25-Dec-25 11:59:28 - NetworkTask started
+25-Dec-25 11:59:28 - Session initialized: Pyrogram v2.2.12 (Layer 214)
+25-Dec-25 11:59:28 - Device: CPython 3.12.12 - Pyrogram 2.2.12
+25-Dec-25 11:59:28 - System: Linux 5.10.237-android12-9-31999025-abA256EXXS9DYK2 (en)
+25-Dec-25 11:59:28 - Session started
+25-Dec-25 11:59:28 - PingTask started
+25-Dec-25 11:59:30 - Stopped 12 HandlerTasks
+25-Dec-25 11:59:30 - PingTask stopped
+25-Dec-25 11:59:30 - NetworkTask stopped
+25-Dec-25 11:59:30 - Disconnected
+25-Dec-25 11:59:30 - Session stopped
+25-Dec-25 11:59:30 - PingTask stopped
+25-Dec-25 11:59:30 - NetworkTask stopped
+25-Dec-25 11:59:30 - Disconnected
+25-Dec-25 11:59:30 - Session stopped
+25-Dec-25 11:59:43 - Connecting...
+25-Dec-25 11:59:43 - Connected! Production DC2 - IPv4
+25-Dec-25 11:59:43 - NetworkTask started
+25-Dec-25 11:59:43 - Time synced: 2025-12-25 11:59:45.055896
+25-Dec-25 11:59:43 - Session initialized: Pyrogram v2.2.12 (Layer 214)
+25-Dec-25 11:59:43 - Device: CPython 3.12.12 - Pyrogram 2.2.12
+25-Dec-25 11:59:43 - System: Linux 5.10.237-android12-9-31999025-abA256EXXS9DYK2 (en)
+25-Dec-25 11:59:43 - Session started
+25-Dec-25 11:59:43 - PingTask started
+25-Dec-25 11:59:44 - Started 12 HandlerTasks
+25-Dec-25 11:59:44 - Stopped 12 HandlerTasks
+25-Dec-25 11:59:44 - PingTask stopped
+25-Dec-25 11:59:44 - NetworkTask stopped
+25-Dec-25 11:59:44 - Disconnected
+25-Dec-25 11:59:44 - Session stopped
+25-Dec-25 11:59:44 - Unexpected error in main loop
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/checker/bot.py", line 134, in <module>
+    app.send_document(log_id, document=namefile, caption=f"TEST\nС аргументами: {args.replace('--', '-')}\nТеперь спать на {sleep_time}сек")
+  File "/data/data/com.termux/files/usr/lib/python3.12/site-packages/pyrogram/sync.py", line 66, in async_to_sync_wrap
+    return loop.run_until_complete(coroutine)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.12/site-packages/pyrogram/methods/messages/send_document.py", line 253, in send_document
+    file = await self.save_file(document, progress=progress, progress_args=progress_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.12/site-packages/pyrogram/methods/advanced/save_file.py", line 129, in save_file
+    raise ValueError("File size equals to 0 B")
+ValueError: File size equals to 0 B
+25-Dec-25 12:01:23 - Connecting...
+25-Dec-25 12:01:23 - Connected! Production DC2 - IPv4
+25-Dec-25 12:01:23 - NetworkTask started
+25-Dec-25 12:01:23 - Time synced: 2025-12-25 12:01:25.011753
+25-Dec-25 12:01:23 - Session initialized: Pyrogram v2.2.12 (Layer 214)
+25-Dec-25 12:01:23 - Device: CPython 3.12.12 - Pyrogram 2.2.12
+25-Dec-25 12:01:23 - System: Linux 5.10.237-android12-9-31999025-abA256EXXS9DYK2 (en)
+25-Dec-25 12:01:23 - Session started
+25-Dec-25 12:01:23 - PingTask started
+25-Dec-25 12:01:24 - Started 12 HandlerTasks
+25-Dec-25 12:01:24 - Connecting...
+25-Dec-25 12:01:24 - Connected! Production DC2 (media) - IPv4
+25-Dec-25 12:01:24 - NetworkTask started
+25-Dec-25 12:01:25 - Session initialized: Pyrogram v2.2.12 (Layer 214)
+25-Dec-25 12:01:25 - Device: CPython 3.12.12 - Pyrogram 2.2.12
+25-Dec-25 12:01:25 - System: Linux 5.10.237-android12-9-31999025-abA256EXXS9DYK2 (en)
+25-Dec-25 12:01:25 - Session started
+25-Dec-25 12:01:25 - PingTask started
+25-Dec-25 12:01:26 - Stopped 12 HandlerTasks
+25-Dec-25 12:01:26 - PingTask stopped
+25-Dec-25 12:01:26 - NetworkTask stopped
+25-Dec-25 12:01:26 - Disconnected
+25-Dec-25 12:01:26 - Session stopped
+25-Dec-25 12:01:26 - PingTask stopped
+25-Dec-25 12:01:26 - NetworkTask stopped
+25-Dec-25 12:01:26 - Disconnected
+25-Dec-25 12:01:26 - Session stopped
+25-Dec-25 12:01:39 - Connecting...
+25-Dec-25 12:01:39 - Connected! Production DC2 - IPv4
+25-Dec-25 12:01:39 - NetworkTask started
+25-Dec-25 12:01:39 - Time synced: 2025-12-25 12:01:41.197223
+25-Dec-25 12:01:40 - Session initialized: Pyrogram v2.2.12 (Layer 214)
+25-Dec-25 12:01:40 - Device: CPython 3.12.12 - Pyrogram 2.2.12
+25-Dec-25 12:01:40 - System: Linux 5.10.237-android12-9-31999025-abA256EXXS9DYK2 (en)
+25-Dec-25 12:01:40 - Session started
+25-Dec-25 12:01:40 - PingTask started
+25-Dec-25 12:01:40 - Started 12 HandlerTasks
+25-Dec-25 12:01:40 - Stopped 12 HandlerTasks
+25-Dec-25 12:01:40 - PingTask stopped
+25-Dec-25 12:01:40 - NetworkTask stopped
+25-Dec-25 12:01:40 - Disconnected
+25-Dec-25 12:01:40 - Session stopped
+25-Dec-25 12:01:40 - Unexpected error in main loop
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/checker/bot.py", line 134, in <module>
+    app.send_document(log_id, document=namefile, caption=f"TEST\nС аргументами: {args.replace('--', '-')}\nТеперь спать на {sleep_time}сек")
+  File "/data/data/com.termux/files/usr/lib/python3.12/site-packages/pyrogram/sync.py", line 66, in async_to_sync_wrap
+    return loop.run_until_complete(coroutine)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.12/site-packages/pyrogram/methods/messages/send_document.py", line 253, in send_document
+    file = await self.save_file(document, progress=progress, progress_args=progress_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.12/site-packages/pyrogram/methods/advanced/save_file.py", line 129, in save_file
+    raise ValueError("File size equals to 0 B")
+ValueError: File size equals to 0 B
+25-Dec-25 12:03:17 - Connecting...
+25-Dec-25 12:03:17 - Connected! Production DC2 - IPv4
+25-Dec-25 12:03:17 - NetworkTask started
+25-Dec-25 12:03:18 - Time synced: 2025-12-25 12:03:19.503271
+25-Dec-25 12:03:18 - Session initialized: Pyrogram v2.2.12 (Layer 214)
+25-Dec-25 12:03:18 - Device: CPython 3.12.12 - Pyrogram 2.2.12
+25-Dec-25 12:03:18 - System: Linux 5.10.237-android12-9-31999025-abA256EXXS9DYK2 (en)
+25-Dec-25 12:03:18 - Session started
+25-Dec-25 12:03:18 - PingTask started
+25-Dec-25 12:03:18 - Started 12 HandlerTasks
+25-Dec-25 12:03:18 - Connecting...
+25-Dec-25 12:03:19 - Connected! Production DC2 (media) - IPv4
+25-Dec-25 12:03:19 - NetworkTask started
+25-Dec-25 12:03:19 - Session initialized: Pyrogram v2.2.12 (Layer 214)
+25-Dec-25 12:03:19 - Device: CPython 3.12.12 - Pyrogram 2.2.12
+25-Dec-25 12:03:19 - System: Linux 5.10.237-android12-9-31999025-abA256EXXS9DYK2 (en)
+25-Dec-25 12:03:19 - Session started
+25-Dec-25 12:03:19 - PingTask started
+25-Dec-25 12:03:20 - Stopped 12 HandlerTasks
+25-Dec-25 12:03:20 - PingTask stopped
+25-Dec-25 12:03:20 - NetworkTask stopped
+25-Dec-25 12:03:20 - Disconnected
+25-Dec-25 12:03:20 - Session stopped
+25-Dec-25 12:03:20 - PingTask stopped
+25-Dec-25 12:03:20 - NetworkTask stopped
+25-Dec-25 12:03:20 - Disconnected
+25-Dec-25 12:03:20 - Session stopped
+25-Dec-25 12:03:34 - Connecting...
+25-Dec-25 12:03:34 - Connected! Production DC2 - IPv4
+25-Dec-25 12:03:34 - NetworkTask started
+25-Dec-25 12:03:34 - Time synced: 2025-12-25 12:03:36.037457
+25-Dec-25 12:03:34 - Session initialized: Pyrogram v2.2.12 (Layer 214)
+25-Dec-25 12:03:34 - Device: CPython 3.12.12 - Pyrogram 2.2.12
+25-Dec-25 12:03:34 - System: Linux 5.10.237-android12-9-31999025-abA256EXXS9DYK2 (en)
+25-Dec-25 12:03:34 - Session started
+25-Dec-25 12:03:34 - PingTask started
+25-Dec-25 12:03:35 - Started 12 HandlerTasks
+25-Dec-25 12:03:35 - Stopped 12 HandlerTasks
+25-Dec-25 12:03:35 - PingTask stopped
+25-Dec-25 12:03:35 - NetworkTask stopped
+25-Dec-25 12:03:35 - Disconnected
+25-Dec-25 12:03:35 - Session stopped
+25-Dec-25 12:03:35 - Unexpected error in main loop
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/checker/bot.py", line 134, in <module>
+    app.send_document(log_id, document=namefile, caption=f"TEST\nС аргументами: {args.replace('--', '-')}\nТеперь спать на {sleep_time}сек")
+  File "/data/data/com.termux/files/usr/lib/python3.12/site-packages/pyrogram/sync.py", line 66, in async_to_sync_wrap
+    return loop.run_until_complete(coroutine)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.12/site-packages/pyrogram/methods/messages/send_document.py", line 253, in send_document
+    file = await self.save_file(document, progress=progress, progress_args=progress_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.12/site-packages/pyrogram/methods/advanced/save_file.py", line 129, in save_file
+    raise ValueError("File size equals to 0 B")
+ValueError: File size equals to 0 B
+25-Dec-25 12:05:14 - Connecting...
+25-Dec-25 12:05:14 - Connected! Production DC2 - IPv4
+25-Dec-25 12:05:14 - NetworkTask started
+25-Dec-25 12:05:14 - Time synced: 2025-12-25 12:05:15.727474
+25-Dec-25 12:05:14 - Session initialized: Pyrogram v2.2.12 (Layer 214)
+25-Dec-25 12:05:14 - Device: CPython 3.12.12 - Pyrogram 2.2.12
+25-Dec-25 12:05:14 - System: Linux 5.10.237-android12-9-31999025-abA256EXXS9DYK2 (en)
+25-Dec-25 12:05:14 - Session started
+25-Dec-25 12:05:14 - PingTask started
+25-Dec-25 12:05:15 - Started 12 HandlerTasks
+25-Dec-25 12:05:15 - Connecting...
+25-Dec-25 12:05:15 - Connected! Production DC2 (media) - IPv4
+25-Dec-25 12:05:15 - NetworkTask started
+25-Dec-25 12:05:15 - Session initialized: Pyrogram v2.2.12 (Layer 214)
+25-Dec-25 12:05:15 - Device: CPython 3.12.12 - Pyrogram 2.2.12
+25-Dec-25 12:05:15 - System: Linux 5.10.237-android12-9-31999025-abA256EXXS9DYK2 (en)
+25-Dec-25 12:05:15 - Session started
+25-Dec-25 12:05:15 - PingTask started
+25-Dec-25 12:05:17 - Stopped 12 HandlerTasks
+25-Dec-25 12:05:17 - PingTask stopped
+25-Dec-25 12:05:17 - NetworkTask stopped
+25-Dec-25 12:05:17 - Disconnected
+25-Dec-25 12:05:17 - Session stopped
+25-Dec-25 12:05:17 - PingTask stopped
+25-Dec-25 12:05:17 - NetworkTask stopped
+25-Dec-25 12:05:17 - Disconnected
+25-Dec-25 12:05:17 - Session stopped
+25-Dec-25 12:05:29 - Connecting...
+25-Dec-25 12:05:29 - Connected! Production DC2 - IPv4
+25-Dec-25 12:05:29 - NetworkTask started
+25-Dec-25 12:05:29 - Time synced: 2025-12-25 12:05:31.382558
+25-Dec-25 12:05:30 - Session initialized: Pyrogram v2.2.12 (Layer 214)
+25-Dec-25 12:05:30 - Device: CPython 3.12.12 - Pyrogram 2.2.12
+25-Dec-25 12:05:30 - System: Linux 5.10.237-android12-9-31999025-abA256EXXS9DYK2 (en)
+25-Dec-25 12:05:30 - Session started
+25-Dec-25 12:05:30 - PingTask started
+25-Dec-25 12:05:30 - Started 12 HandlerTasks
+25-Dec-25 12:05:30 - Stopped 12 HandlerTasks
+25-Dec-25 12:05:30 - PingTask stopped
+25-Dec-25 12:05:30 - NetworkTask stopped
+25-Dec-25 12:05:30 - Disconnected
+25-Dec-25 12:05:30 - Session stopped
+25-Dec-25 12:05:30 - Unexpected error in main loop
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/checker/bot.py", line 134, in <module>
+    app.send_document(log_id, document=namefile, caption=f"TEST\nС аргументами: {args.replace('--', '-')}\nТеперь спать на {sleep_time}сек")
+  File "/data/data/com.termux/files/usr/lib/python3.12/site-packages/pyrogram/sync.py", line 66, in async_to_sync_wrap
+    return loop.run_until_complete(coroutine)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.12/site-packages/pyrogram/methods/messages/send_document.py", line 253, in send_document
+    file = await self.save_file(document, progress=progress, progress_args=progress_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.12/site-packages/pyrogram/methods/advanced/save_file.py", line 129, in save_file
+    raise ValueError("File size equals to 0 B")
+ValueError: File size equals to 0 B
+25-Dec-25 12:07:09 - Connecting...
+25-Dec-25 12:07:09 - Connected! Production DC2 - IPv4
+25-Dec-25 12:07:09 - NetworkTask started
+25-Dec-25 12:07:09 - Time synced: 2025-12-25 12:07:11.210406
+25-Dec-25 12:07:10 - Session initialized: Pyrogram v2.2.12 (Layer 214)
+25-Dec-25 12:07:10 - Device: CPython 3.12.12 - Pyrogram 2.2.12
+25-Dec-25 12:07:10 - System: Linux 5.10.237-android12-9-31999025-abA256EXXS9DYK2 (en)
+25-Dec-25 12:07:10 - Session started
+25-Dec-25 12:07:10 - PingTask started
+25-Dec-25 12:07:10 - Started 12 HandlerTasks
+25-Dec-25 12:07:10 - Connecting...
+25-Dec-25 12:07:10 - Connected! Production DC2 (media) - IPv4
+25-Dec-25 12:07:10 - NetworkTask started
+25-Dec-25 12:07:11 - Session initialized: Pyrogram v2.2.12 (Layer 214)
+25-Dec-25 12:07:11 - Device: CPython 3.12.12 - Pyrogram 2.2.12
+25-Dec-25 12:07:11 - System: Linux 5.10.237-android12-9-31999025-abA256EXXS9DYK2 (en)
+25-Dec-25 12:07:11 - Session started
+25-Dec-25 12:07:11 - PingTask started
+25-Dec-25 12:07:12 - Stopped 12 HandlerTasks
+25-Dec-25 12:07:12 - PingTask stopped
+25-Dec-25 12:07:12 - NetworkTask stopped
+25-Dec-25 12:07:12 - Disconnected
+25-Dec-25 12:07:12 - Session stopped
+25-Dec-25 12:07:12 - PingTask stopped
+25-Dec-25 12:07:12 - NetworkTask stopped
+25-Dec-25 12:07:12 - Disconnected
+25-Dec-25 12:07:12 - Session stopped
+25-Dec-25 12:07:24 - Connecting...
+25-Dec-25 12:07:24 - Connected! Production DC2 - IPv4
+25-Dec-25 12:07:24 - NetworkTask started
+25-Dec-25 12:07:25 - Time synced: 2025-12-25 12:07:26.476499
+25-Dec-25 12:07:25 - Session initialized: Pyrogram v2.2.12 (Layer 214)
+25-Dec-25 12:07:25 - Device: CPython 3.12.12 - Pyrogram 2.2.12
+25-Dec-25 12:07:25 - System: Linux 5.10.237-android12-9-31999025-abA256EXXS9DYK2 (en)
+25-Dec-25 12:07:25 - Session started
+25-Dec-25 12:07:25 - PingTask started
+25-Dec-25 12:07:25 - Started 12 HandlerTasks
+25-Dec-25 12:07:25 - Stopped 12 HandlerTasks
+25-Dec-25 12:07:25 - PingTask stopped
+25-Dec-25 12:07:25 - NetworkTask stopped
+25-Dec-25 12:07:25 - Disconnected
+25-Dec-25 12:07:25 - Session stopped
+25-Dec-25 12:07:25 - Unexpected error in main loop
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/checker/bot.py", line 134, in <module>
+    app.send_document(log_id, document=namefile, caption=f"TEST\nС аргументами: {args.replace('--', '-')}\nТеперь спать на {sleep_time}сек")
+  File "/data/data/com.termux/files/usr/lib/python3.12/site-packages/pyrogram/sync.py", line 66, in async_to_sync_wrap
+    return loop.run_until_complete(coroutine)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.12/site-packages/pyrogram/methods/messages/send_document.py", line 253, in send_document
+    file = await self.save_file(document, progress=progress, progress_args=progress_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.12/site-packages/pyrogram/methods/advanced/save_file.py", line 129, in save_file
+    raise ValueError("File size equals to 0 B")
+ValueError: File size equals to 0 B
+25-Dec-25 12:09:04 - Connecting...
+25-Dec-25 12:09:04 - Connected! Production DC2 - IPv4
+25-Dec-25 12:09:04 - NetworkTask started
+25-Dec-25 12:09:04 - Time synced: 2025-12-25 12:09:05.914063
+25-Dec-25 12:09:04 - Session initialized: Pyrogram v2.2.12 (Layer 214)
+25-Dec-25 12:09:04 - Device: CPython 3.12.12 - Pyrogram 2.2.12
+25-Dec-25 12:09:04 - System: Linux 5.10.237-android12-9-31999025-abA256EXXS9DYK2 (en)
+25-Dec-25 12:09:04 - Session started
+25-Dec-25 12:09:04 - PingTask started
+25-Dec-25 12:09:05 - Started 12 HandlerTasks
+25-Dec-25 12:09:05 - Connecting...
+25-Dec-25 12:09:05 - Connected! Production DC2 (media) - IPv4
+25-Dec-25 12:09:05 - NetworkTask started
+25-Dec-25 12:09:06 - Session initialized: Pyrogram v2.2.12 (Layer 214)
+25-Dec-25 12:09:06 - Device: CPython 3.12.12 - Pyrogram 2.2.12
+25-Dec-25 12:09:06 - System: Linux 5.10.237-android12-9-31999025-abA256EXXS9DYK2 (en)
+25-Dec-25 12:09:06 - Session started
+25-Dec-25 12:09:06 - PingTask started
+25-Dec-25 12:09:06 - Stopped 12 HandlerTasks
+25-Dec-25 12:09:06 - PingTask stopped
+25-Dec-25 12:09:07 - NetworkTask stopped
+25-Dec-25 12:09:07 - Disconnected
+25-Dec-25 12:09:07 - Session stopped
+25-Dec-25 12:09:07 - PingTask stopped
+25-Dec-25 12:09:07 - NetworkTask stopped
+25-Dec-25 12:09:07 - Disconnected
+25-Dec-25 12:09:07 - Session stopped
+25-Dec-25 12:09:19 - Connecting...
+25-Dec-25 12:09:20 - Connected! Production DC2 - IPv4
+25-Dec-25 12:09:20 - NetworkTask started
+25-Dec-25 12:09:20 - Time synced: 2025-12-25 12:09:21.605639
+25-Dec-25 12:09:20 - Session initialized: Pyrogram v2.2.12 (Layer 214)
+25-Dec-25 12:09:20 - Device: CPython 3.12.12 - Pyrogram 2.2.12
+25-Dec-25 12:09:20 - System: Linux 5.10.237-android12-9-31999025-abA256EXXS9DYK2 (en)
+25-Dec-25 12:09:20 - Session started
+25-Dec-25 12:09:20 - PingTask started
+25-Dec-25 12:09:20 - Started 12 HandlerTasks
+25-Dec-25 12:09:20 - Stopped 12 HandlerTasks
+25-Dec-25 12:09:20 - PingTask stopped
+25-Dec-25 12:09:20 - NetworkTask stopped
+25-Dec-25 12:09:20 - Disconnected
+25-Dec-25 12:09:20 - Session stopped
+25-Dec-25 12:09:20 - Unexpected error in main loop
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/checker/bot.py", line 134, in <module>
+    app.send_document(log_id, document=namefile, caption=f"TEST\nС аргументами: {args.replace('--', '-')}\nТеперь спать на {sleep_time}сек")
+  File "/data/data/com.termux/files/usr/lib/python3.12/site-packages/pyrogram/sync.py", line 66, in async_to_sync_wrap
+    return loop.run_until_complete(coroutine)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.12/site-packages/pyrogram/methods/messages/send_document.py", line 253, in send_document
+    file = await self.save_file(document, progress=progress, progress_args=progress_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.12/site-packages/pyrogram/methods/advanced/save_file.py", line 129, in save_file
+    raise ValueError("File size equals to 0 B")
+ValueError: File size equals to 0 B
+25-Dec-25 12:10:59 - Connecting...
+25-Dec-25 12:10:59 - Connected! Production DC2 - IPv4
+25-Dec-25 12:10:59 - NetworkTask started
+25-Dec-25 12:10:59 - Time synced: 2025-12-25 12:11:00.949317
+25-Dec-25 12:10:59 - Session initialized: Pyrogram v2.2.12 (Layer 214)
+25-Dec-25 12:10:59 - Device: CPython 3.12.12 - Pyrogram 2.2.12
+25-Dec-25 12:10:59 - System: Linux 5.10.237-android12-9-31999025-abA256EXXS9DYK2 (en)
+25-Dec-25 12:10:59 - Session started
+25-Dec-25 12:10:59 - PingTask started
+25-Dec-25 12:11:00 - Started 12 HandlerTasks
+25-Dec-25 12:11:00 - Connecting...
+25-Dec-25 12:11:00 - Connected! Production DC2 (media) - IPv4
+25-Dec-25 12:11:00 - NetworkTask started
+25-Dec-25 12:11:00 - Session initialized: Pyrogram v2.2.12 (Layer 214)
+25-Dec-25 12:11:00 - Device: CPython 3.12.12 - Pyrogram 2.2.12
+25-Dec-25 12:11:00 - System: Linux 5.10.237-android12-9-31999025-abA256EXXS9DYK2 (en)
+25-Dec-25 12:11:00 - Session started
+25-Dec-25 12:11:00 - PingTask started
+25-Dec-25 12:11:02 - Stopped 12 HandlerTasks
+25-Dec-25 12:11:02 - PingTask stopped
+25-Dec-25 12:11:02 - NetworkTask stopped
+25-Dec-25 12:11:02 - Disconnected
+25-Dec-25 12:11:02 - Session stopped
+25-Dec-25 12:11:02 - PingTask stopped
+25-Dec-25 12:11:02 - NetworkTask stopped
+25-Dec-25 12:11:02 - Disconnected
+25-Dec-25 12:11:02 - Session stopped
+25-Dec-25 12:11:15 - Connecting...
+25-Dec-25 12:11:15 - Connected! Production DC2 - IPv4
+25-Dec-25 12:11:15 - NetworkTask started
+25-Dec-25 12:11:15 - Time synced: 2025-12-25 12:11:17.116814
+25-Dec-25 12:11:16 - Session initialized: Pyrogram v2.2.12 (Layer 214)
+25-Dec-25 12:11:16 - Device: CPython 3.12.12 - Pyrogram 2.2.12
+25-Dec-25 12:11:16 - System: Linux 5.10.237-android12-9-31999025-abA256EXXS9DYK2 (en)
+25-Dec-25 12:11:16 - Session started
+25-Dec-25 12:11:16 - PingTask started
+25-Dec-25 12:11:16 - Started 12 HandlerTasks
+25-Dec-25 12:11:16 - Stopped 12 HandlerTasks
+25-Dec-25 12:11:16 - PingTask stopped
+25-Dec-25 12:11:16 - NetworkTask stopped
+25-Dec-25 12:11:16 - Disconnected
+25-Dec-25 12:11:16 - Session stopped
+25-Dec-25 12:11:16 - Unexpected error in main loop
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/checker/bot.py", line 134, in <module>
+    app.send_document(log_id, document=namefile, caption=f"TEST\nС аргументами: {args.replace('--', '-')}\nТеперь спать на {sleep_time}сек")
+  File "/data/data/com.termux/files/usr/lib/python3.12/site-packages/pyrogram/sync.py", line 66, in async_to_sync_wrap
+    return loop.run_until_complete(coroutine)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.12/site-packages/pyrogram/methods/messages/send_document.py", line 253, in send_document
+    file = await self.save_file(document, progress=progress, progress_args=progress_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.12/site-packages/pyrogram/methods/advanced/save_file.py", line 129, in save_file
+    raise ValueError("File size equals to 0 B")
+ValueError: File size equals to 0 B
+25-Dec-25 12:12:23 - Connecting...
+25-Dec-25 12:12:24 - Connected! Production DC2 - IPv4
+25-Dec-25 12:12:24 - NetworkTask started
+25-Dec-25 12:12:24 - Time synced: 2025-12-25 12:12:25.603745
+25-Dec-25 12:12:24 - Session initialized: Pyrogram v2.2.12 (Layer 214)
+25-Dec-25 12:12:24 - Device: CPython 3.12.12 - Pyrogram 2.2.12
+25-Dec-25 12:12:24 - System: Linux 5.10.237-android12-9-31999025-abA256EXXS9DYK2 (en)
+25-Dec-25 12:12:24 - Session started
+25-Dec-25 12:12:24 - PingTask started
+25-Dec-25 12:12:24 - Started 12 HandlerTasks
+25-Dec-25 12:12:24 - Stopped 12 HandlerTasks
+25-Dec-25 12:12:24 - PingTask stopped
+25-Dec-25 12:12:24 - NetworkTask stopped
+25-Dec-25 12:12:24 - Disconnected
+25-Dec-25 12:12:24 - Session stopped
+25-Dec-25 12:12:24 - Unexpected error in main loop
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/checker/bot.py", line 125, in <module>
+    app.send_document(log_id, document=namefile, caption=f"MAIN\nС аргументами: {args.replace('--', '-')}\nТеперь спать на {sleep_time}сек")
+  File "/data/data/com.termux/files/usr/lib/python3.12/site-packages/pyrogram/sync.py", line 66, in async_to_sync_wrap
+    return loop.run_until_complete(coroutine)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.12/site-packages/pyrogram/methods/messages/send_document.py", line 253, in send_document
+    file = await self.save_file(document, progress=progress, progress_args=progress_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.12/site-packages/pyrogram/methods/advanced/save_file.py", line 129, in save_file
+    raise ValueError("File size equals to 0 B")
+ValueError: File size equals to 0 B
+25-Dec-25 12:14:04 - Connecting...
+25-Dec-25 12:14:04 - Connected! Production DC2 - IPv4
+25-Dec-25 12:14:04 - NetworkTask started
+25-Dec-25 12:14:04 - Time synced: 2025-12-25 12:14:05.806170
+25-Dec-25 12:14:04 - Session initialized: Pyrogram v2.2.12 (Layer 214)
+25-Dec-25 12:14:04 - Device: CPython 3.12.12 - Pyrogram 2.2.12
+25-Dec-25 12:14:04 - System: Linux 5.10.237-android12-9-31999025-abA256EXXS9DYK2 (en)
+25-Dec-25 12:14:04 - Session started
+25-Dec-25 12:14:04 - PingTask started
+25-Dec-25 12:14:05 - Started 12 HandlerTasks
+25-Dec-25 12:14:05 - Connecting...
+25-Dec-25 12:14:05 - Connected! Production DC2 (media) - IPv4
+25-Dec-25 12:14:05 - NetworkTask started
+25-Dec-25 12:14:05 - Session initialized: Pyrogram v2.2.12 (Layer 214)
+25-Dec-25 12:14:05 - Device: CPython 3.12.12 - Pyrogram 2.2.12
+25-Dec-25 12:14:05 - System: Linux 5.10.237-android12-9-31999025-abA256EXXS9DYK2 (en)
+25-Dec-25 12:14:05 - Session started
+25-Dec-25 12:14:05 - PingTask started
+25-Dec-25 12:14:07 - Stopped 12 HandlerTasks
+25-Dec-25 12:14:07 - PingTask stopped
+25-Dec-25 12:14:07 - NetworkTask stopped
+25-Dec-25 12:14:07 - Disconnected
+25-Dec-25 12:14:07 - Session stopped
+25-Dec-25 12:14:07 - PingTask stopped
+25-Dec-25 12:14:07 - NetworkTask stopped
+25-Dec-25 12:14:07 - Disconnected
+25-Dec-25 12:14:07 - Session stopped
+25-Dec-25 12:14:19 - Connecting...
+25-Dec-25 12:14:19 - Connected! Production DC2 - IPv4
+25-Dec-25 12:14:19 - NetworkTask started
+25-Dec-25 12:14:20 - Time synced: 2025-12-25 12:14:21.480523
+25-Dec-25 12:14:20 - Session initialized: Pyrogram v2.2.12 (Layer 214)
+25-Dec-25 12:14:20 - Device: CPython 3.12.12 - Pyrogram 2.2.12
+25-Dec-25 12:14:20 - System: Linux 5.10.237-android12-9-31999025-abA256EXXS9DYK2 (en)
+25-Dec-25 12:14:20 - Session started
+25-Dec-25 12:14:20 - PingTask started
+25-Dec-25 12:14:20 - Started 12 HandlerTasks
+25-Dec-25 12:14:20 - Stopped 12 HandlerTasks
+25-Dec-25 12:14:20 - PingTask stopped
+25-Dec-25 12:14:20 - NetworkTask stopped
+25-Dec-25 12:14:20 - Disconnected
+25-Dec-25 12:14:20 - Session stopped
+25-Dec-25 12:14:20 - Unexpected error in main loop
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/checker/bot.py", line 134, in <module>
+    app.send_document(log_id, document=namefile, caption=f"TEST\nС аргументами: {args.replace('--', '-')}\nТеперь спать на {sleep_time}сек")
+  File "/data/data/com.termux/files/usr/lib/python3.12/site-packages/pyrogram/sync.py", line 66, in async_to_sync_wrap
+    return loop.run_until_complete(coroutine)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.12/site-packages/pyrogram/methods/messages/send_document.py", line 253, in send_document
+    file = await self.save_file(document, progress=progress, progress_args=progress_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.12/site-packages/pyrogram/methods/advanced/save_file.py", line 129, in save_file
+    raise ValueError("File size equals to 0 B")
+ValueError: File size equals to 0 B
+25-Dec-25 12:16:10 - Connecting...
+25-Dec-25 12:16:10 - Connected! Production DC2 - IPv4
+25-Dec-25 12:16:10 - NetworkTask started
+25-Dec-25 12:16:10 - Time synced: 2025-12-25 12:16:12.382760
+25-Dec-25 12:16:11 - Session initialized: Pyrogram v2.2.12 (Layer 214)
+25-Dec-25 12:16:11 - Device: CPython 3.12.12 - Pyrogram 2.2.12
+25-Dec-25 12:16:11 - System: Linux 5.10.237-android12-9-31999025-abA256EXXS9DYK2 (en)
+25-Dec-25 12:16:11 - Session started
+25-Dec-25 12:16:11 - PingTask started
+25-Dec-25 12:16:11 - Started 12 HandlerTasks
+25-Dec-25 12:16:11 - Connecting...
+25-Dec-25 12:16:11 - Connected! Production DC2 (media) - IPv4
+25-Dec-25 12:16:11 - NetworkTask started
+25-Dec-25 12:16:12 - Session initialized: Pyrogram v2.2.12 (Layer 214)
+25-Dec-25 12:16:12 - Device: CPython 3.12.12 - Pyrogram 2.2.12
+25-Dec-25 12:16:12 - System: Linux 5.10.237-android12-9-31999025-abA256EXXS9DYK2 (en)
+25-Dec-25 12:16:12 - Session started
+25-Dec-25 12:16:12 - PingTask started
+25-Dec-25 12:16:13 - Stopped 12 HandlerTasks
+25-Dec-25 12:16:13 - PingTask stopped
+25-Dec-25 12:16:13 - NetworkTask stopped
+25-Dec-25 12:16:13 - Disconnected
+25-Dec-25 12:16:13 - Session stopped
+25-Dec-25 12:16:13 - PingTask stopped
+25-Dec-25 12:16:13 - NetworkTask stopped
+25-Dec-25 12:16:13 - Disconnected
+25-Dec-25 12:16:13 - Session stopped
+25-Dec-25 12:16:26 - Connecting...
+25-Dec-25 12:16:26 - Connected! Production DC2 - IPv4
+25-Dec-25 12:16:26 - NetworkTask started
+25-Dec-25 12:16:26 - Time synced: 2025-12-25 12:16:28.121943
+25-Dec-25 12:16:27 - Session initialized: Pyrogram v2.2.12 (Layer 214)
+25-Dec-25 12:16:27 - Device: CPython 3.12.12 - Pyrogram 2.2.12
+25-Dec-25 12:16:27 - System: Linux 5.10.237-android12-9-31999025-abA256EXXS9DYK2 (en)
+25-Dec-25 12:16:27 - Session started
+25-Dec-25 12:16:27 - PingTask started
+25-Dec-25 12:16:27 - Started 12 HandlerTasks
+25-Dec-25 12:16:27 - Stopped 12 HandlerTasks
+25-Dec-25 12:16:27 - PingTask stopped
+25-Dec-25 12:16:27 - NetworkTask stopped
+25-Dec-25 12:16:27 - Disconnected
+25-Dec-25 12:16:27 - Session stopped
+25-Dec-25 12:16:27 - Unexpected error in main loop
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/checker/bot.py", line 134, in <module>
+    app.send_document(log_id, document=namefile, caption=f"TEST\nС аргументами: {args.replace('--', '-')}\nТеперь спать на {sleep_time}сек")
+  File "/data/data/com.termux/files/usr/lib/python3.12/site-packages/pyrogram/sync.py", line 66, in async_to_sync_wrap
+    return loop.run_until_complete(coroutine)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.12/site-packages/pyrogram/methods/messages/send_document.py", line 253, in send_document
+    file = await self.save_file(document, progress=progress, progress_args=progress_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/data/com.termux/files/usr/lib/python3.12/site-packages/pyrogram/methods/advanced/save_file.py", line 129, in save_file
+    raise ValueError("File size equals to 0 B")
+ValueError: File size equals to 0 B
+25-Dec-25 12:17:29 - Unexpected error in main loop
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/checker/bot.py", line 121, in <module>
+    os.rename("sortedProxy.txt", namefile)
+FileNotFoundError: [Errno 2] No such file or directory: 'sortedProxy.txt' -> 'result_20251225_071729'
+25-Dec-25 12:18:31 - Unexpected error in main loop
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/checker/bot.py", line 121, in <module>
+    os.rename("sortedProxy.txt", namefile)
+FileNotFoundError: [Errno 2] No such file or directory: 'sortedProxy.txt' -> 'result_20251225_071831'
+25-Dec-25 12:19:34 - Unexpected error in main loop
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/checker/bot.py", line 121, in <module>
+    os.rename("sortedProxy.txt", namefile)
+FileNotFoundError: [Errno 2] No such file or directory: 'sortedProxy.txt' -> 'result_20251225_071934'
+25-Dec-25 12:20:37 - Unexpected error in main loop
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/checker/bot.py", line 121, in <module>
+    os.rename("sortedProxy.txt", namefile)
+FileNotFoundError: [Errno 2] No such file or directory: 'sortedProxy.txt' -> 'result_20251225_072037'
+25-Dec-25 12:21:39 - Unexpected error in main loop
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/checker/bot.py", line 121, in <module>
+    os.rename("sortedProxy.txt", namefile)
+FileNotFoundError: [Errno 2] No such file or directory: 'sortedProxy.txt' -> 'result_20251225_072139'
+25-Dec-25 12:22:41 - Unexpected error in main loop
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/checker/bot.py", line 121, in <module>
+    os.rename("sortedProxy.txt", namefile)
+FileNotFoundError: [Errno 2] No such file or directory: 'sortedProxy.txt' -> 'result_20251225_072241'
+25-Dec-25 12:23:45 - Unexpected error in main loop
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/checker/bot.py", line 121, in <module>
+    os.rename("sortedProxy.txt", namefile)
+FileNotFoundError: [Errno 2] No such file or directory: 'sortedProxy.txt' -> 'result_20251225_072345'
+25-Dec-25 12:24:49 - Unexpected error in main loop
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/checker/bot.py", line 121, in <module>
+    os.rename("sortedProxy.txt", namefile)
+FileNotFoundError: [Errno 2] No such file or directory: 'sortedProxy.txt' -> 'result_20251225_072449'
+25-Dec-25 12:25:53 - Unexpected error in main loop
+Traceback (most recent call last):
+  File "/data/data/com.termux/files/home/checker/bot.py", line 121, in <module>
+    os.rename("sortedProxy.txt", namefile)
+FileNotFoundError: [Errno 2] No such file or directory: 'sortedProxy.txt' -> 'result_20251225_072553'
