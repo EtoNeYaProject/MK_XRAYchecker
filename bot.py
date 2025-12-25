@@ -11,8 +11,8 @@ import logging
 
 # =================================
 version = "1.0"
-log_id = -1003669488656
-token = ""
+log_id = int(input("Введите ваш id (получить можно в @Getmyid_Work_Bot):"))
+token = str(input("Введите токен бота (получить можно в @BotFather):"))
 main_link_subs = "https://etoneya.a9fm.site/1"
 test_link_subs = "https://etoneya.a9fm.site/test"
 args = "--timeout 10 --threads 3 --t2kill 5"
