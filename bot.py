@@ -8,16 +8,13 @@ import urllib.request
 import zipfile
 import shutil
 import logging
+import json
 
-# =================================
 version = "1.0"
-log_id = -1003669488656
-token = ""
 main_link_subs = "https://etoneya.a9fm.site/1"
 test_link_subs = "https://etoneya.a9fm.site/test"
 args = "--timeout 10 --threads 3 --t2kill 5"
 sleep_time = 500
-# =================================
 
 logging.basicConfig(
     filename="logs.log",
@@ -27,6 +24,22 @@ logging.basicConfig(
     level=logging.INFO
 )
 
+def get_bot_config():
+    config_file = "bot.json"
+    if os.path.exists(config_file):
+        with open(config_file, 'r') as f:
+            return json.load(f)
+    else:
+        log_id = int(input("Введите ваш id (получить можно в @Getmyid_Work_Bot):"))
+        token = str(input("Введите токен бота (получить можно в @BotFather):"))
+        config = {"log_id": log_id, "token": token}
+        with open(config_file, 'w') as f:
+            json.dump(config, f)
+        return config
+
+config = get_bot_config()
+log_id = config["log_id"]
+token = config["token"]
 
 if platform.system() == "Windows":
     XRAY_PATH = os.path.join("bin", "xray.exe")
@@ -98,11 +111,11 @@ except Exception as e:
 
 while True:
     try:
-        # MAIN
         if platform.system() == "Windows":
             python_var = "python"
         else:
             python_var = "python3"
+        
         os.system(f"{python_var} v2rayChecker.py -u {main_link_subs} {args}")
         namefile = f"result_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}"
         os.rename("sortedProxy.txt", namefile)
@@ -112,7 +125,6 @@ while True:
             app.send_document(log_id, document=namefile, caption=f"MAIN\nС аргументами: {args.replace('--', '-')}\nТеперь спать на {sleep_time}сек")
         os.remove(namefile)
 
-        # TEST
         os.system(f"{python_var} v2rayChecker.py -u {test_link_subs} {args}")
         namefile = f"result_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}"
         os.rename("sortedProxy.txt", namefile)
@@ -127,4 +139,4 @@ while True:
 
     except Exception as e:
         logging.exception("Unexpected error in main loop")
-        time.sleep(60)  # пауза перед повтором
+        time.sleep(60)

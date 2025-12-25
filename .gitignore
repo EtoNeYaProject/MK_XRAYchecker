@@ -1,0 +1,11 @@
+bin/*
+config.json
+bot.json
+**/__pycache__/*
+__pycache__/*
+bot.session
+checker_history.log
+**/result*
+result*
+sources.json
+*.log
