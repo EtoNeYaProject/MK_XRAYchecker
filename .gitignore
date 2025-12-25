@@ -8,3 +8,4 @@ checker_history.log
 **/result*
 result*
 sources.json
+*.log
