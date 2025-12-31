@@ -14,7 +14,7 @@ version = "1.1"
 test_link_subs = "https://raw.githubusercontent.com/EtoNeYaProject/testrepo/refs/heads/main/test.txt"
 test2_link_subs = "https://raw.githubusercontent.com/EtoNeYaProject/testrepo/refs/heads/main/test2.txt"
 test3_link_subs = "https://raw.githubusercontent.com/EtoNeYaProject/testrepo/refs/heads/main/test3.txt"
-args = "--timeout 10 --threads 3 --t2kill 5"
+args = "--timeout 10 --t2kill 5"
 sleep_time = 500
 
 logging.basicConfig(
