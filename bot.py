@@ -11,9 +11,18 @@ import logging
 import json
 
 version = "1.1"
-test_link_subs = "https://raw.githubusercontent.com/EtoNeYaProject/etoneyaproject.github.io/refs/heads/main/died"
-test2_link_subs = "https://raw.githubusercontent.com/EtoNeYaProject/etoneyaproject.github.io/refs/heads/main/archived"
-test3_link_subs = "https://raw.githubusercontent.com/EtoNeYaProject/etoneyaproject.github.io/refs/heads/main/test"
+links = [
+    "https://raw.githubusercontent.com/EtoNeYaProject/etoneyaproject.github.io/refs/heads/main/died",
+    "https://raw.githubusercontent.com/EtoNeYaProject/etoneyaproject.github.io/refs/heads/main/archived",
+    "https://raw.githubusercontent.com/EtoNeYaProject/etoneyaproject.github.io/refs/heads/main/test",
+    "https://raw.githubusercontent.com/EtoNeYaProject/etoneyaproject.github.io/refs/heads/main/1",
+    #lowik
+    "https://raw.githubusercontent.com/LowiKLive/BypassWhitelistRu/refs/heads/main/WhiteList-Bypass_Ru.txt",
+    #yzewe
+    "https://vpn.yzewe.ru/7145117452/K8F8xYDVIcFWauMEi7Q77w",
+    
+]
+
 args = "--timeout 10 --t2kill 5"
 sleep_time = 500
 
@@ -116,33 +125,20 @@ while True:
             python_var = "python"
         else:
             python_var = "python3"
-        
-        os.system(f"{python_var} v2rayChecker.py -u {test_link_subs} {args}")
-        namefile = f"result_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}"
-        os.rename("sortedProxy.txt", namefile)
 
-        app = Client("bot", api_id=2860432, api_hash="2fde6ca0f8ae7bb58844457a239c7214", bot_token=token)
-        with app:
-            app.send_document(log_id, document=namefile, caption=f"MAIN\nС аргументами: {args.replace('--', '-')}\nТеперь спать на {sleep_time}сек")
-        os.remove(namefile)
+        for i in links:
+            os.system(f"{python_var} v2rayChecker.py -u {test2_link_subs} {args}")
+            namefile = f"result_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}"
+            os.rename("sortedProxy.txt", namefile)
 
-        os.system(f"{python_var} v2rayChecker.py -u {test2_link_subs} {args}")
-        namefile = f"result_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}"
-        os.rename("sortedProxy.txt", namefile)
+            app = Client("bot", api_id=2860432, api_hash="2fde6ca0f8ae7bb58844457a239c7214", bot_token=token)
+            with app:
+                app.send_document(log_id, document=namefile, caption=f"{i}\nС аргументами: {args.replace('--', '-')}\nТеперь спать на {sleep_time}сек")
+            os.remove(namefile)
 
-        app = Client("bot", api_id=2860432, api_hash="2fde6ca0f8ae7bb58844457a239c7214", bot_token=token)
-        with app:
-            app.send_document(log_id, document=namefile, caption=f"TEST\nС аргументами: {args.replace('--', '-')}\nТеперь спать на {sleep_time}сек")
-        os.remove(namefile)
-
-        os.system(f"{python_var} v2rayChecker.py -u {test3_link_subs} {args}")
-        namefile = f"result_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}"
-        os.rename("sortedProxy.txt", namefile)
-
-        app = Client("bot", api_id=2860432, api_hash="2fde6ca0f8ae7bb58844457a239c7214", bot_token=token)
-        with app:
-            app.send_document(log_id, document=namefile, caption=f"MAIN\nС аргументами: {args.replace('--', '-')}\nТеперь спать на {sleep_time}сек")
-        os.remove(namefile)
+            os.system(f"{python_var} v2rayChecker.py -u {test3_link_subs} {args}")
+            namefile = f"result_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}"
+            os.rename("sortedProxy.txt", namefile)
 
         logging.info(f"Sleeping for {sleep_time} seconds")
         time.sleep(sleep_time)
