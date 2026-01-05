@@ -19,7 +19,7 @@
 # ║                                  mk69.su                                ║
 # +═════════════════════════════════════════════════════════════════════════+
 # +═════════════════════════════════════════════════════════════════════════+
-# ║                           VERSION 1.0.2                                 ║
+# ║                           VERSION 1.0.3                                 ║
 # ║             В случае багов/недочётов создайте issue на github           ║
 # ║                                                                         ║
 # +═════════════════════════════════════════════════════════════════════════+
@@ -45,6 +45,7 @@ import stat
 from datetime import datetime
 from http.client import BadStatusLine, RemoteDisconnected
 import urllib.parse
+import html
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from types import SimpleNamespace
 from threading import Lock, Semaphore
@@ -61,6 +62,31 @@ FLOW_ALLOWED = {
     "",
     "xtls-rprx-vision",
 }
+
+# -------------------------------
+# Xray Shadowsocks: официально перечисленные поддерживаемые методы (актуально на 2026-01-05)
+SS_ALLOWED_METHODS = {
+    # Shadowsocks 2022
+    "2022-blake3-aes-128-gcm",
+    "2022-blake3-aes-256-gcm",
+    "2022-blake3-chacha20-poly1305",
+
+    # AEAD (legacy)
+    "aes-128-gcm",
+    "aes-256-gcm",
+    "chacha20-poly1305",
+    "chacha20-ietf-poly1305",
+    "xchacha20-poly1305",
+    "xchacha20-ietf-poly1305",
+
+    # Без шифрования
+    "none",
+    "plain",
+}
+
+# Устаревшие методы, которые НЕ поддерживаются (для справки):
+# aes-128-cfb, aes-192-cfb, aes-256-cfb, aes-128-ctr, aes-256-ctr,
+# camellia-128-cfb, camellia-256-cfb, rc4-md5, bf-cfb, и т.д.
 # -------------------------------
 
 try:
@@ -202,6 +228,10 @@ DEFAULT_CONFIG = {
 
 
     "sources": {}, # Переезд в отделный .json
+    
+    # Debug mode: при True используется proxies_per_batch=1 и threads=1
+    # для быстрого поиска проблемной ссылки
+    "debug_mode": False,
 }
 
 def load_sources():
@@ -317,10 +347,58 @@ class Style:
     RESET_ALL = "[/]"
 
 def clean_url(url):
+    """
+    Нормализация URL: удаление BOM, невидимых символов,
+    декодирование HTML entities (&amp; -> &) и URL encoding (%26 -> &).
+    Делаем 2 прохода для вложенных экранирований типа &amp%3B или %26amp%3B.
+    """
     url = url.strip()
     url = url.replace('\ufeff', '').replace('\u200b', '')
     url = url.replace('\n', '').replace('\r', '')
+    
+    url = html.unescape(url)
+    url = urllib.parse.unquote(url)
+    
+    url = html.unescape(url)
+    url = urllib.parse.unquote(url)
+    
     return url
+
+def _self_test_clean_url():
+    """
+    Юнит-тест для clean_url(): проверяет корректность декодирования
+    HTML entities и URL encoding для параметров VLESS/REALITY.
+    Запускать: python v2rayChecker.py --self-test
+    
+    Returns:
+        bool: True если все тесты прошли
+    """
+    test_cases = [
+        # (входная строка, ожидаемая подстрока после очистки)
+        ("vless://test@host:443?security=reality&amp;pbk=ABC&amp;sid=123", "security=reality&pbk=ABC&sid=123"),
+        ("vless://test@host:443?security=reality&amp%3Bpbk=ABC", "security=reality&pbk=ABC"),
+        ("vless://test@host:443?security=reality%26amp%3Bpbk=ABC", "security=reality&pbk=ABC"),
+        ("vless://test@host:443?flow=xtls-rprx-vision&type=tcp", "flow=xtls-rprx-vision&type=tcp"),
+    ]
+    
+    passed = 0
+    for raw, expected in test_cases:
+        cleaned = clean_url(raw)
+        if "?" in cleaned:
+            query = cleaned.split("?", 1)[1]
+            params = urllib.parse.parse_qs(query)
+            has_separate_keys = "security" in params or "pbk" in params or "flow" in params
+            if has_separate_keys or expected in cleaned:
+                passed += 1
+                safe_print(f"[green]✓ PASS[/]: {raw[:60]}...")
+            else:
+                safe_print(f"[red]✗ FAIL[/]: {raw[:60]}...")
+                safe_print(f"[dim]  Got: {cleaned[:100]}[/]")
+        else:
+            passed += 1
+    
+    safe_print(f"\n[bold]Self-test: {passed}/{len(test_cases)} passed[/]")
+    return passed == len(test_cases)
 
 ANSI_ESCAPE = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
 
@@ -602,20 +680,44 @@ def parse_vless(url):
         security = get_p("security", "none").lower()
         if security not in ["tls", "reality", "none", "auto"]:
             security = "none"
+        
+        if flow and security not in ["tls", "reality"]:
+            if GLOBAL_CFG.get("debug_mode"):
+                safe_print(f"[yellow][DEBUG] Dropping flow={flow} for security={security} (flow requires tls/reality)[/]")
+            flow = ""
 
         pbk = get_p("pbk", "")
-        if pbk and not REALITY_PBK_RE.match(pbk):
-            pbk = ""
+        # ВАЛИДАЦИЯ: Строгая проверка X25519 ключа (base64url -> 32 байта)
+        if pbk:
+            try:
+                missing_padding = len(pbk) % 4
+                pbk_padded = pbk + '=' * (4 - missing_padding) if missing_padding else pbk
+                
+                decoded = base64.urlsafe_b64decode(pbk_padded)
+                
+                if len(decoded) != 32:
+                    if GLOBAL_CFG.get("debug_mode"):
+                        safe_print(f"[yellow][DEBUG] Dropping invalid PBK (len{len(decoded)}!=32): {pbk}[/]")
+                    pbk = ""
+            except Exception as e:
+                if GLOBAL_CFG.get("debug_mode"):
+                    safe_print(f"[yellow][DEBUG] Dropping invalid PBK (decode error): {pbk} ({e})[/]")
+                pbk = ""
 
         if pbk and security == "tls":
             security = "reality"
 
         sid = get_p("sid", "")
-        sid = re.sub(r"[^a-fA-F0-9]", "", sid)
-        if len(sid) % 2 != 0:
-            sid = ""
-        if sid and not REALITY_SID_RE.match(sid):
-            sid = ""
+        # Валидация ShortId: должен быть hex и чётной длины
+        if sid:
+            sid = re.sub(r"[^0-9a-fA-F]", "", sid)
+            if len(sid) % 2 != 0:
+                if GLOBAL_CFG.get("debug_mode"):
+                    safe_print(f"[yellow][DEBUG] Fixing odd SID length {len(sid)}: {sid} -> 0{sid}[/]")
+                sid = "0" + sid
+            
+            if not REALITY_SID_RE.match(sid):
+                sid = ""
 
         return {
             "protocol": "vless",
@@ -683,7 +785,7 @@ def parse_vmess(url):
                     "protocol": "vmess",
                     "uuid": uuid,
                     "address": address,
-                    "port": port,
+                    "port": int(port),
                     "type": net_type,
                     "security": get_p("security", "none"),
                     "path": final_path,
@@ -805,12 +907,27 @@ def parse_ss(url):
             address, port = addr_port.rsplit(':', 1)
 
         if not address or not port: return None
+        
+        method_lower = method.lower().strip()
+        
+        # Алиасы для chacha20
+        if method_lower == "chacha20-poly1305":
+            method_lower = "chacha20-ietf-poly1305"
+        elif method_lower == "xchacha20-poly1305":
+            method_lower = "xchacha20-ietf-poly1305"
+        
+        # Валидация: проверяем что cipher поддерживается Xray
+        # CFB/CTR/OFB stream ciphers вызывают Exit 23!
+        if method_lower not in SS_ALLOWED_METHODS:
+            if GLOBAL_CFG.get("debug_mode"):
+                safe_print(f"[yellow][DEBUG] Dropping SS link: unsupported cipher '{method}' (only AEAD allowed)[/]")
+            return None
 
         return {
             "protocol": "shadowsocks",
             "address": address,
             "port": int(port),
-            "method": method,
+            "method": method_lower,
             "password": password,
             "tag": urllib.parse.unquote(tag).strip()
         }
@@ -1099,7 +1216,7 @@ def create_batch_config_file(proxy_list, start_port, work_dir):
         return None, None, "No valid proxies"
     
     full_config = {
-        "log": {"loglevel": "none"},
+        "log": {"loglevel": "warning"},  # warning для диагностики (none скрывает ошибки)
         "inbounds": inbounds,
         "outbounds": outbounds,
         "routing": {
@@ -1113,6 +1230,45 @@ def create_batch_config_file(proxy_list, start_port, work_dir):
         json.dump(full_config, f, indent=2)
     
     return config_path, valid_proxies, None
+
+def save_failed_batch(config_path, error_output, exit_code):
+    """
+    Сохранение упавшего batch-конфига и лога ошибки в ./failed_batches/
+    для последующей отладки командой: xray run -test -c <file>.json
+    
+    Args:
+        config_path: путь к JSON конфигу ядра
+        error_output: захваченный вывод ошибки
+        exit_code: код выхода процесса ядра
+    
+    Returns:
+        tuple: (путь к скопированному JSON, путь к логу) или (None, None) при ошибке
+    """
+    try:
+        failed_dir = os.path.join(os.getcwd(), "failed_batches")
+        os.makedirs(failed_dir, exist_ok=True)
+        
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        base_name = os.path.basename(config_path).replace(".json", "")
+        
+        dest_json = os.path.join(failed_dir, f"{base_name}_{timestamp}.json")
+        shutil.copy2(config_path, dest_json)
+        
+        log_path = os.path.join(failed_dir, f"{base_name}_{timestamp}.log.txt")
+        with open(log_path, 'w', encoding='utf-8') as f:
+            f.write(f"Exit code: {exit_code}\n")
+            f.write(f"Timestamp: {timestamp}\n")
+            f.write(f"Config: {config_path}\n")
+            f.write("-" * 50 + "\n")
+            f.write(error_output or "No output captured")
+        
+        safe_print(f"[yellow]📁 Debug files saved to: {failed_dir}[/]")
+        safe_print(f"[dim]   Reproduce: xray run -test -c \"{dest_json}\"[/]")
+        
+        return dest_json, log_path
+    except Exception as e:
+        safe_print(f"[red]Failed to save debug artifacts: {e}[/]")
+        return None, None
 
 def run_core(core_path, config_path):
     if platform.system() != "Windows":
@@ -1129,8 +1285,8 @@ def run_core(core_path, config_path):
     try:
         return subprocess.Popen(
             cmd,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
             startupinfo=startupinfo,
             text=True,
             bufsize=1,
@@ -1270,13 +1426,23 @@ def Checker(proxyList, localPortStart, testDomain, timeOut, t2exec, t2kill,
     while (time.time() - start_time) < max_wait:
         poll_result = proc.poll()
         if poll_result is not None:
+            exitcode = proc.returncode
+            if exitcode == 0: break
+            
             try:
-                err_output = proc.stderr.read() if proc.stderr else ""
-                if err_output:
-                    safe_print(f"[bold red]Core startup failed: {err_output[:500]}[/]")
-            except:
-                pass
-            break
+                out_data, _ = proc.communicate(timeout=1)
+                if out_data:
+                     error_msg = out_data.strip()[-2000:] 
+            except Exception as e:
+                error_msg = f"Failed to read error output: {e}"
+            
+            safe_print(f"[bold red]BATCH FAILED[/] [yellow]Ядро не запустилось (Exit: {exitcode})[/]")
+            safe_print(f"[dim]Error: {error_msg[:300]}[/]")
+            
+            save_failed_batch(configPath, error_msg, exitcode)
+            
+            kill_core(proc)
+            return current_live_results
         if is_port_in_use(valid_mapping[0][1]):
             core_started = True
             break
@@ -1289,9 +1455,9 @@ def Checker(proxyList, localPortStart, testDomain, timeOut, t2exec, t2kill,
         exitcode = proc.poll()
         error_msg = "Unknown error"
         try:
-            if proc.stderr:
+            if proc.stdout:
                 err_lines = []
-                for line in proc.stderr:
+                for line in proc.stdout:
                     err_lines.append(line.strip())
                     if len(err_lines) > 50:
                         break
@@ -1306,6 +1472,8 @@ def Checker(proxyList, localPortStart, testDomain, timeOut, t2exec, t2kill,
         
         safe_print(f"[bold red]BATCH FAILED[/] [yellow]Ядро не запустилось (Exit: {exitcode})[/]")
         safe_print(f"[dim]Error: {error_msg[:300]}[/]")
+        
+        save_failed_batch(configPath, error_msg, exitcode)
             
         exit_code = proc.poll()
         
@@ -1749,11 +1917,25 @@ def main():
     parser.add_argument("--speed", action="store_true", dest="speed_check", help="Включить тест скорости")
     parser.add_argument("--sort", choices=["ping", "speed"], default=GLOBAL_CFG['sort_by'], dest="sort_by", help="Метод сортировки")
     parser.add_argument("--speed-url", default=GLOBAL_CFG['speed_test_url'], dest="speed_test_url")
+    parser.add_argument("--self-test", action="store_true", help="Запустить самопроверку URL парсинга")
+    parser.add_argument("--debug", action="store_true", help="Debug режим (proxies_per_batch=1, threads=1)")
 
     if len(sys.argv) == 1:
         interactive_menu()
     else:
         args = parser.parse_args()
+        
+        if getattr(args, 'self_test', False):
+            print("Running URL parsing self-test...")
+            success = _self_test_clean_url()
+            sys.exit(0 if success else 1)
+        
+        if getattr(args, 'debug', False):
+            GLOBAL_CFG['debug_mode'] = True
+            GLOBAL_CFG['proxies_per_batch'] = 1
+            GLOBAL_CFG['threads'] = 1
+            safe_print("[yellow][DEBUG MODE] proxies_per_batch=1, threads=1[/]")
+        
         if args.menu: interactive_menu()
         else:
             print(Fore.CYAN + "MK_XRAYchecker by mkultra69 with HATE" + Style.RESET_ALL)
