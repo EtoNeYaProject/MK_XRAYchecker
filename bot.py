@@ -10,12 +10,14 @@ import shutil
 import logging
 import json
 
-version = "1.2"
+version = "1.2.1"
 links = [
     "https://raw.githubusercontent.com/EtoNeYaProject/etoneyaproject.github.io/refs/heads/main/died",
     "https://raw.githubusercontent.com/EtoNeYaProject/etoneyaproject.github.io/refs/heads/main/archived",
     "https://raw.githubusercontent.com/EtoNeYaProject/etoneyaproject.github.io/refs/heads/main/test",
     "https://raw.githubusercontent.com/EtoNeYaProject/etoneyaproject.github.io/refs/heads/main/1",
+    #igareck
+    "https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/Vless-Reality-White-Lists-Rus-Mobile.txt",
     #lowik
     "https://raw.githubusercontent.com/LowiKLive/BypassWhitelistRu/refs/heads/main/WhiteList-Bypass_Ru.txt",
     #yzewe
@@ -28,6 +30,12 @@ links = [
     "https://raw.githubusercontent.com/ebrasha/free-v2ray-public-list/refs/heads/main/V2Ray-Config-By-EbraSha-All-Type.txt",
     #goida
     "https://github.com/AvenCores/goida-vpn-configs/raw/refs/heads/main/githubmirror/26.txt",
+    #zieng2
+    "https://raw.githubusercontent.com/zieng2/wl/main/vless_lite.txt",
+    #y9felix
+    "http://github.com/y9felix/s/raw/main/b#best",
+    #bpwlfree
+    "https://bp.wl.free.nf/confs/merged.txt",
 ]
 
 args = "--timeout 10 --t2kill 5"
@@ -57,6 +65,11 @@ def get_bot_config():
 config = get_bot_config()
 log_id = config["log_id"]
 token = config["token"]
+
+
+app = Client("bot", api_id=2860432, api_hash="2fde6ca0f8ae7bb58844457a239c7214", bot_token=token)
+with app:
+    app.send_message(log_id, "Бот запущен! Качаю зависимости, и начинаю работу")
 
 if platform.system() == "Windows":
     XRAY_PATH = os.path.join("bin", "xray.exe")
